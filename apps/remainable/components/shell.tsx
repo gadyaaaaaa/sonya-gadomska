@@ -28,7 +28,10 @@ export function Footer() {
         <p>Experimental engineering technology.</p>
       </div>
       <div>
-        <p>Not for emergency response or structural safety certification.</p>
+        <p>
+          For preliminary documentation and professional review. Does not
+          determine structural safety.
+        </p>
         <small>{COPYRIGHT}</small>
       </div>
     </footer>
