@@ -1574,3 +1574,76 @@ summary {
     widows: 3;
   }
 }
+
+/* Founder introduction — Copyright (c) 2026 Sonya Gadomska. */
+.founder {
+  display: grid;
+  grid-template-columns: minmax(240px, 340px) minmax(0, 650px);
+  gap: clamp(45px, 8vw, 120px);
+  justify-content: center;
+  background: var(--paper);
+}
+.founder-profile > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border: 1px solid var(--line);
+}
+.founder-profile h3 {
+  font-size: 28px;
+  margin: 24px 0 12px;
+}
+.founder-credentials {
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: 340px;
+}
+.founder-links {
+  display: flex;
+  gap: 26px;
+  margin-top: 22px;
+}
+.founder-letter > .eyebrow {
+  margin: 2px 0 24px;
+}
+.founder-letter h2 {
+  font-size: clamp(40px, 4.5vw, 64px);
+  margin-bottom: 30px;
+}
+.founder-letter > p:not(.eyebrow):not(.founder-signature) {
+  font-size: 18px;
+  line-height: 1.75;
+  letter-spacing: -0.015em;
+  margin-bottom: 21px;
+  color: #51564b;
+}
+.founder-signature {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  margin-top: 30px;
+  font-size: 19px;
+  color: var(--ink);
+}
+.founder-signature span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+@media (max-width: 760px) {
+  .founder {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+  .founder-profile {
+    max-width: 380px;
+  }
+  .founder-letter h2 {
+    font-size: 42px;
+  }
+  .founder-letter > p:not(.eyebrow):not(.founder-signature) {
+    font-size: 16px;
+  }
+}

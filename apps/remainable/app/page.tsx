@@ -125,6 +125,61 @@ export default function Home() {
           <span className="tag">Phase 1 · Local demonstration</span>
         </div>
       </section>
+      <section className="section founder" aria-labelledby="founder-heading">
+        <div className="founder-profile">
+          <img
+            src="/sonya-gadomska.png"
+            alt="Sonya Gadomska"
+            width={460}
+            height={460}
+            loading="lazy"
+          />
+          <h3>Sonya Gadomska</h3>
+          <p className="founder-credentials">
+            Architectural Engineering student @ University of Waterloo, Creative
+            Destruction Lab apprentice alumna
+          </p>
+          <div className="founder-links">
+            <a
+              className="text-link"
+              href="https://www.linkedin.com/in/sonya-gadomska-4833113b6/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn <ArrowUpRight size={16} />
+            </a>
+            <a
+              className="text-link"
+              href="https://github.com/gadyaaaaaa"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub <ArrowUpRight size={16} />
+            </a>
+          </div>
+        </div>
+        <div className="founder-letter">
+          <p className="eyebrow">THE PERSON BEHIND REMAINABLE</p>
+          <h2 id="founder-heading">Dear investors,</h2>
+          <p>
+            I’m Sonya. I study how buildings stand up. Remainable asks what
+            comes next when they’re damaged.
+          </p>
+          <p>
+            I’m building an early prototype that turns scattered photographs
+            into organized evidence for engineers: what’s visible, what’s
+            missing, and what to inspect next.
+          </p>
+          <p>
+            Good ideas need foundations, too. If you’re an investor, engineer or
+            reconstruction professional who’d like to help shape this one, let’s
+            talk.
+          </p>
+          <p className="founder-signature">
+            Sonya Gadomska<span>Founder, Remainable</span>
+          </p>
+        </div>
+      </section>
       <SavedAssessments />
     </main>
   );
