@@ -85,7 +85,7 @@ Before enabling real analysis: add authenticated Supabase users, private storage
 
 The first milestone produces a portable static `out/` directory. Publish only those files to an isolated document root, with all routes and `_next` assets intact. Keep trailing-slash routes enabled. Do not copy source, `.env`, `node_modules` or credentials into a public directory.
 
-Intended domain: `remainable.hrnftr.com`. The domain must have a valid HTTPS certificate before use. The hosting certificate was not valid for that name during initial inspection. No existing HRNFTR application needs to be replaced.
+Live Phase 1 demo: https://remainable.hrnftr.com — deployed on 9 September 2026 from application commit `88393ca5a4b1d5a1f7116c5bfd119bc4bc68c2a7`. HTTPS and all application routes were verified. Real AI and cloud storage remain disabled. See `docs/DEPLOYMENT.md` for release checks and rollback.
 
 Before release, archive the existing target directory and record the release commit. Roll back by restoring that archive (including hidden files) or rebuilding a prior commit. Browser-local data and application source are separate; do not wipe storage during a routine rollback.
 

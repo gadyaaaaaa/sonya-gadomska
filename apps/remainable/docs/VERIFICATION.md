@@ -13,4 +13,4 @@ Validated 9 September 2026:
 
 The image viewer and report use illustrative diagrams clearly marked fictional. Confidence values are not invented. Real uploaded photos remain unreviewed, with no assigned priority. Each printable report distinguishes Sonya Gadomska as the application author from a professional reviewer, who is not assigned.
 
-Deployment has not been performed. The existing subdomain hosting folder was inspected read-only; its TLS certificate did not cover remainable.hrnftr.com at inspection time.
+Deployed to https://remainable.hrnftr.com on 9 September 2026. HTTPS now validates. All 56 public build files match their SHA-256 hashes; landing, form, assessment, report and required assets returned HTTP 200. A live browser passed the fictional assessment, evidence revision, report reload and PDF printing flow with no page errors. See `DEPLOYMENT.md` for the backup and rollback.
