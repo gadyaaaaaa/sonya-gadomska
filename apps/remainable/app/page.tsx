@@ -165,7 +165,7 @@ export default function Home() {
           <p>
             I’m Sonya, a Ukrainian studying Architectural Engineering at
             Waterloo. My studies are about how buildings stand up. Remainable
-            asks what comes next when they’re damaged.
+            asks what comes next when they’re damaged or destroyed.
           </p>
           <p>
             The idea is this: turn scattered photographs into organized evidence
