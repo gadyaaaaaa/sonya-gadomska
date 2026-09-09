@@ -163,20 +163,16 @@ export default function Home() {
             Dear future co-founders, investors &amp; mentors,
           </h2>
           <p>
-            I’m Sonya, a Ukrainian studying Architectural Engineering at
-            Waterloo. My studies are about how buildings stand up. Remainable
-            asks what comes next when they’re damaged or destroyed.
+            I’m Sonya, studying Architectural Engineering at Waterloo. My
+            studies are about how buildings stand up. Remainable asks what comes
+            next when they’re damaged or destroyed.
           </p>
           <p>
             The idea is this: turn scattered photographs into organized evidence
             for engineers, showing what’s visible, what’s missing, and what to
             inspect next.
           </p>
-          <p>
-            Ukraine will be the first place to test it. Damaged buildings are
-            unfortunately not hard to find there, and better assessment tools
-            could help make reconstruction faster.
-          </p>
+          <p>Better assessment tools could help make reconstruction faster.</p>
           <p>
             Remainable is an early experiment. If you know buildings,
             reconstruction, startups, or simply think this is worth exploring,
