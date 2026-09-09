@@ -128,10 +128,10 @@ export default function Home() {
       <section className="section founder" aria-labelledby="founder-heading">
         <div className="founder-profile">
           <img
-            src="/sonya-gadomska.png"
+            src="/sonya-gadomska-editorial.jpg"
             alt="Sonya Gadomska"
-            width={460}
-            height={460}
+            width={900}
+            height={900}
             loading="lazy"
           />
           <h3>Sonya Gadomska</h3>
