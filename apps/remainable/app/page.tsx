@@ -45,19 +45,12 @@ export default function Home() {
               <Plus size={16} />
             </div>
             <img
-              src="/demo/elevation.svg"
-              alt="Conceptual line drawing of a five-storey building; fictional demonstration illustration"
+              src="/remainable-cutaway.jpg"
+              alt="Architectural cutaway illustration of a fictional damaged residential building, showing exposed rooms and floor slabs"
             />
             <div className="drawing-caption">
               <span>OBSERVE. DOCUMENT. REVIEW.</span>
-              <span>FIG. 01 / SCHEMATIC</span>
-            </div>
-            <div className="drawing-note">
-              <span>01</span>
-              <p>
-                Some answers need
-                <br />a closer look.
-              </p>
+              <span>FIG. 01 / CONCEPT</span>
             </div>
           </div>
         </div>
