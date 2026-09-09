@@ -159,21 +159,28 @@ export default function Home() {
           </div>
         </div>
         <div className="founder-letter">
-          <p className="eyebrow">THE PERSON BEHIND REMAINABLE</p>
-          <h2 id="founder-heading">Dear investors,</h2>
+          <h2 id="founder-heading">
+            Dear future co-founders, investors &amp; mentors,
+          </h2>
           <p>
-            I’m Sonya. I study how buildings stand up. Remainable asks what
-            comes next when they’re damaged.
+            I’m Sonya, a Ukrainian studying Architectural Engineering at
+            Waterloo. My studies are about how buildings stand up. Remainable
+            asks what comes next when they’re damaged.
           </p>
           <p>
-            I’m building an early prototype that turns scattered photographs
-            into organized evidence for engineers: what’s visible, what’s
-            missing, and what to inspect next.
+            The idea is this: turn scattered photographs into organized evidence
+            for engineers, showing what’s visible, what’s missing, and what to
+            inspect next.
           </p>
           <p>
-            Good ideas need foundations, too. If you’re an investor, engineer or
-            reconstruction professional who’d like to help shape this one, let’s
-            talk.
+            Ukraine will be the first place to test it. Damaged buildings are
+            unfortunately not hard to find there, and better assessment tools
+            could help make reconstruction faster.
+          </p>
+          <p>
+            Remainable is an early experiment. If you know buildings,
+            reconstruction, startups, or simply think this is worth exploring,
+            I’d love to talk.
           </p>
           <p className="founder-signature">
             Sonya Gadomska<span>Founder, Remainable</span>
