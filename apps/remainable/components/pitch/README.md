@@ -1,25 +1,27 @@
-# Pitch deck framework
+# Remainable working pitch
 
 Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 
-Route: `/pitch/`. This page deliberately contains only working titles and neutral placeholders. The main navigation includes a Pitch Deck link, including on mobile.
+Route: `/pitch/`, linked from the desktop and mobile menu. The first content version has 19 slides, from “What can remain?” to the research notes. The original navigation, presentation controls, keyboard handling and site palette are retained.
 
-## Editing slides
+## Editing the story
 
-Edit `slides.ts`. Each entry has a stable `id` (the URL hash), `title`, `type`, and `placeholders`. Array order determines slide numbering, dropdown order, next/previous navigation, and progress. Add or remove an entry to change the slide count. Move an entry to reorder it. Keep IDs unique and unchanged when renaming a title so saved links continue to work.
+`slides.ts` holds ordered slide data: stable `id`, menu `title`, display `heading`, `status`, `intro`, labelled `items`, `layout`, `note` and source IDs. Move an entry to reorder it; numbering, contents and progress follow automatically. Keep IDs stable so existing links continue to work. The old `#ask` link maps to `#roadmap`, which includes the next ask. The proposed technical stack and experiment criteria are also data in this file.
 
-Example: `/pitch/#problem`, `/pitch/#insight`, `/pitch/#solution`.
+`pitch-slide.tsx` keeps the common slide frame. `slide-content.tsx` renders reusable content layouts and optional hierarchy/workflow/path-selection controls. `pitch-deck.tsx` handles navigation. `pitch.module.css` extends the original frame without new dependencies. Existing placeholder and image components remain available for later slides.
 
-`pitch-deck.tsx` handles navigation and presentation mode. `pitch-slide.tsx` contains slide layout, Placeholder, SlideContent and responsive PitchImage components. Styles are scoped in `pitch.module.css`; colors and fonts come from the existing site.
+Source records live in `sources.ts`. Relevant slides have collapsible source links; the final research slide lists all nine with context. Company product descriptions are attributed and are not treated as independently tested capabilities. Research does not validate Remainable's customer demand or technical approach.
 
-To introduce a real interactive slide later, create its own component and pass it through the optional `content` map on PitchDeck, keyed by slide ID. Add `data-pitch-interactive` to custom interactive regions that need to own their arrow keys. Form controls, links, buttons and common interactive roles already retain their keyboard behavior. No calculators, charts, evidence or claims have been added.
+All core text is visible without interacting. Selecting a hierarchy level highlights a conceptual drawing; selecting a workflow step highlights its explanation; selecting a technology path changes the experiment annotation. Sources and the proposed stack expand on demand. Interactive controls retain their own keyboard behavior. Reduced-motion settings and natural mobile scrolling are preserved.
 
-Desktop slides use a minimum viewport height and gentle scroll snapping. Mobile uses natural content height and ordinary scrolling. Arrows, Home and End navigate when focus is outside interactive controls. Slide headings receive focus on keyboard/button navigation. Use the contents selector to jump to any slide. Presentation mode hides the existing header/footer without using fullscreen; Exit or Escape restores them. Reduced-motion preferences disable smooth transitions and snapping.
+## Editorial boundaries
 
-Validation: lint, typecheck, unit tests, production build, and `tests/e2e/pitch.spec.ts` (desktop/tablet/mobile, deep links, hash/history, keyboard, presentation mode and scrolling).
+Sonya is the sole founder and a first-year student, not a qualified structural engineer. Customer pain, buyer, value, AI feasibility, competitive gap, business model and possible markets remain hypotheses. The current app does not analyse uploaded images. AI/backend features are proposed, not enabled. No customers, advisers, pilots, partners, revenue, prices, market-size figures or performance metrics are invented. Ukraine is a possible learning environment within a global problem.
 
-## Menu release validation and rollback
+Source links were reviewed on 13 September 2026. The ReThink / Helvetas / Skat PDF is a December 2023 publication, not a current market measurement. No unverified numerical or model-performance claims are used.
 
-The menu link is checked at 1440, 820, 390 and 320px. Lint, typecheck, all seven unit tests and production build pass; all seven pitch browser checks pass. A temporary 18-slide deck also verified adding/reordering, numbering and navigation and was removed before the release build. The existing assessment reload test fails in the full suite on both the unchanged baseline and this release; assessment code was not changed.
+## Validation and rollback
 
-The page framework is commit `49cc0d4`; revert the following menu commit to remove the menu link. A hosting backup is retained in `/home/dls0/deploy-backups/remainable-pitch-menu-20260913/` for restoring the pre-release website.
+Lint, typecheck, production export and eight unit tests pass. Eight pitch browser scenarios cover all 19 slides at 1440, 820, 390 and 320px, navigation, source links, presentation mode, reduced/normal motion, controls and the old ask link. Screenshots were visually reviewed. The assessment code is unchanged; its previously documented full-suite reload failure is outside this change.
+
+Pre-content source: `0c5f24e55d4f12d8899a6db3f7fa34e54b5f35b8`. Revert the content commit to return to the placeholder deck. The corresponding pre-content hosting backup is `/home/dls0/deploy-backups/remainable-pitch-content-20260913/www-before.tar.gz`.

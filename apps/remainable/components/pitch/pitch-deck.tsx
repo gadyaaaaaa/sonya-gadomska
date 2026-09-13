@@ -10,7 +10,7 @@ import {
 } from "react";
 import { ArrowLeft, ArrowRight, Maximize2, Minimize2 } from "lucide-react";
 import { PitchSlide } from "./pitch-slide";
-import type { PitchSlideData } from "./slides";
+import { pitchHashAliases, type PitchSlideData } from "./slides";
 import styles from "./pitch.module.css";
 
 export function PitchDeck({
@@ -74,9 +74,9 @@ export function PitchDeck({
   useEffect(() => {
     if (!slides.length) return;
     const fromHash = (initial = false) => {
-      const index = slides.findIndex(
-        (slide) => `#${slide.id}` === window.location.hash,
-      );
+      const fragment = window.location.hash.slice(1);
+      const target = pitchHashAliases[fragment] ?? fragment;
+      const index = slides.findIndex((slide) => slide.id === target);
       if (index >= 0) goTo(index, false, true);
       else if (initial) goTo(0, false, true);
     };

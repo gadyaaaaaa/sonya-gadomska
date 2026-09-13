@@ -2,6 +2,7 @@
 import Image, { type ImageProps } from "next/image";
 import type { ReactNode } from "react";
 import type { PitchSlideData } from "./slides";
+import { PitchSlideContent, SlideSources } from "./slide-content";
 import styles from "./pitch.module.css";
 
 export function Placeholder({ children }: { children: ReactNode }) {
@@ -46,11 +47,13 @@ export function PitchSlide({
       id={slide.id}
       className={styles.slide}
       data-type={slide.type}
+      data-layout={slide.layout}
+      data-populated={Boolean(slide.heading)}
       aria-labelledby={`${slide.id}-title`}
     >
       <div className={styles.slideMeta}>
         <span>REMAINABLE / PITCH DECK</span>
-        <span>WORKING STRUCTURE</span>
+        <span>EARLY-STAGE EXPLORATION</span>
       </div>
       <div className={styles.slideBody}>
         <header className={styles.slideHeader}>
@@ -58,22 +61,31 @@ export function PitchSlide({
             {String(index + 1).padStart(2, "0")}
           </span>
           <Heading id={`${slide.id}-title`} tabIndex={-1}>
-            {slide.title}
+            {slide.heading ?? slide.title}
           </Heading>
           <p className={styles.status}>
             <span aria-hidden="true" />
-            Content pending
+            {slide.status ?? "Content pending"}
           </p>
+          {slide.intro && <p className={styles.slideIntro}>{slide.intro}</p>}
         </header>
         <SlideContent>
           {children ??
-            slide.placeholders.map((label, i) => (
-              <Placeholder key={`${i}-${label}`}>{label}</Placeholder>
+            (slide.items ? (
+              <PitchSlideContent slide={slide} />
+            ) : (
+              slide.placeholders?.map((label, i) => (
+                <Placeholder key={`${i}-${label}`}>{label}</Placeholder>
+              ))
             ))}
         </SlideContent>
       </div>
+      {slide.note && <p className={styles.slideNote}>{slide.note}</p>}
+      {slide.layout !== "research" && (
+        <SlideSources ids={slide.sources ?? []} />
+      )}
       <footer className={styles.slideFooter}>
-        <span>PROVISIONAL / TO BE DEVELOPED</span>
+        <span>WORKING PITCH / OPEN TO EVIDENCE</span>
         <span>
           {String(index + 1).padStart(2, "0")} /{" "}
           {String(total).padStart(2, "0")}
