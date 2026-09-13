@@ -53,7 +53,7 @@ export function PitchSlide({
     >
       <div className={styles.slideMeta}>
         <span>REMAINABLE / PITCH DECK</span>
-        <span>EARLY-STAGE EXPLORATION</span>
+        <span>{slide.title}</span>
       </div>
       <div className={styles.slideBody}>
         <header className={styles.slideHeader}>
@@ -63,10 +63,12 @@ export function PitchSlide({
           <Heading id={`${slide.id}-title`} tabIndex={-1}>
             {slide.heading ?? slide.title}
           </Heading>
-          <p className={styles.status}>
-            <span aria-hidden="true" />
-            {slide.status ?? "Content pending"}
-          </p>
+          {slide.status && (
+            <p className={styles.status}>
+              <span aria-hidden="true" />
+              {slide.status}
+            </p>
+          )}
           {slide.intro && <p className={styles.slideIntro}>{slide.intro}</p>}
         </header>
         <SlideContent>
@@ -82,10 +84,13 @@ export function PitchSlide({
       </div>
       {slide.note && <p className={styles.slideNote}>{slide.note}</p>}
       {slide.layout !== "research" && (
-        <SlideSources ids={slide.sources ?? []} />
+        <SlideSources
+          ids={slide.sources ?? []}
+          detailed={slide.sourceDetails}
+        />
       )}
       <footer className={styles.slideFooter}>
-        <span>WORKING PITCH / OPEN TO EVIDENCE</span>
+        <span>REMAINABLE</span>
         <span>
           {String(index + 1).padStart(2, "0")} /{" "}
           {String(total).padStart(2, "0")}

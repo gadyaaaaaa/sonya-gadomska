@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 import { test, expect } from "@playwright/test";
-import { pitchSlides } from "../../components/pitch/slides";
+import { pitchSlides, pitchHashAliases } from "../../components/pitch/slides";
 
 test("pitch link is reachable from the desktop and mobile menu", async ({
   page,
@@ -33,15 +33,15 @@ test("pitch deep links, keyboard, controls and presentation mode", async ({
   await expect(page.locator("main section")).toHaveCount(pitchSlides.length);
   await page.locator("#problem-title").focus();
   await page.keyboard.press("ArrowRight");
-  await expect(page).toHaveURL(/#insight$/);
+  await expect(page).toHaveURL(/#solution$/);
   await page.keyboard.press("ArrowDown");
   await expect(page).toHaveURL(/#why-now$/);
   await page.keyboard.press("ArrowLeft");
-  await expect(page).toHaveURL(/#insight$/);
+  await expect(page).toHaveURL(/#solution$/);
   await page.keyboard.press("ArrowUp");
   await expect(page).toHaveURL(/#problem$/);
   await page.keyboard.press("End");
-  await expect(page).toHaveURL(/#sources$/);
+  await expect(page).toHaveURL(/#roadmap$/);
   await expect(
     page.getByRole("button", { name: "Next slide", exact: true }),
   ).toBeDisabled();
@@ -51,22 +51,22 @@ test("pitch deep links, keyboard, controls and presentation mode", async ({
     page.getByRole("button", { name: "Previous slide", exact: true }),
   ).toBeDisabled();
   await page.getByRole("button", { name: "Next slide", exact: true }).click();
-  await expect(page).toHaveURL(/#problem$/);
-  await page.getByLabel("Go to slide").selectOption("market");
-  await expect(page).toHaveURL(/#market$/);
+  await expect(page).toHaveURL(/#insight$/);
+  await page.getByLabel("Go to slide").selectOption("who-it-is-for");
+  await expect(page).toHaveURL(/#who-it-is-for$/);
   await page.getByRole("button", { name: "Enter presentation mode" }).click();
   await expect(page.locator(".site-header")).toBeHidden();
   await expect(page.locator(".site-footer")).toBeHidden();
   await page.keyboard.press("Escape");
   await expect(page.locator(".site-header")).toBeVisible();
   await page.reload();
-  await expect(page.getByLabel("Go to slide")).toHaveValue("market");
+  await expect(page.getByLabel("Go to slide")).toHaveValue("who-it-is-for");
   await page.evaluate(() => {
     window.location.hash = "solution";
   });
   await expect(page.getByLabel("Go to slide")).toHaveValue("solution");
   await page.goBack();
-  await expect(page.getByLabel("Go to slide")).toHaveValue("market");
+  await expect(page.getByLabel("Go to slide")).toHaveValue("who-it-is-for");
 });
 
 for (const width of [1440, 820, 390, 320]) {
@@ -90,7 +90,7 @@ for (const width of [1440, 820, 390, 320]) {
         .boundingBox();
       expect(heading!.y).toBeGreaterThanOrEqual(nav!.height);
       if (
-        ["cover", "alternatives", "technology", "vision", "sources"].includes(
+        ["cover", "alternatives", "technology", "insight", "roadmap"].includes(
           id,
         )
       )
@@ -116,23 +116,23 @@ test("long jumps keep their hash with motion enabled", async ({ page }) => {
   await page.goto("/pitch/#cover");
   await page.locator("#cover-title").focus();
   await page.keyboard.press("End");
-  await expect(page).toHaveURL(/#sources$/);
-  await expect(page.getByLabel("Go to slide")).toHaveValue("sources");
+  await expect(page).toHaveURL(/#roadmap$/);
+  await expect(page.getByLabel("Go to slide")).toHaveValue("roadmap");
   await page.keyboard.press("Home");
   await expect(page).toHaveURL(/#cover$/);
   await page.keyboard.press("ArrowRight");
-  await expect(page).toHaveURL(/#problem$/);
+  await expect(page).toHaveURL(/#insight$/);
   await expect
     .poll(() =>
       page
-        .locator("#problem")
+        .locator("#insight")
         .evaluate((el) => Math.round(el.getBoundingClientRect().top)),
     )
     .toBe(78);
-  await expect(page.getByLabel("Go to slide")).toHaveValue("problem");
+  await expect(page.getByLabel("Go to slide")).toHaveValue("insight");
 });
 
-test("new content, optional controls, source links and old ask link", async ({
+test("short pitch, retained controls and separately expandable research", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -140,46 +140,60 @@ test("new content, optional controls, source links and old ask link", async ({
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/pitch/#ask");
   await expect(page).toHaveURL(/#roadmap$/);
-  await expect(page.locator("main")).not.toContainText("Content pending");
-  await expect(page.locator("main")).not.toContainText("will go here");
-  await page.getByLabel("Go to slide").selectOption("technology");
-  const geometry = page
-    .locator("#technology")
-    .getByRole("button", { name: /Geometry-first/ });
-  await geometry.click();
-  await expect(geometry).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByText(/Decision rule: explore geometry/)).toBeVisible();
-  await page.keyboard.press("ArrowRight");
-  await expect(page).toHaveURL(/#technology$/);
-  await page
-    .locator("#technology")
-    .getByText("The small first prototype", { exact: true })
-    .click();
-  await expect(
-    page.getByText("Backend · proposed", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("main section")).toHaveCount(10);
+  await expect(page.getByLabel("Go to slide").locator("option")).toHaveCount(
+    10,
+  );
+  await expect(page.locator("main")).not.toContainText(
+    /working draft|Content pending|early-stage|Backend|database|Business Model/i,
+  );
   await page.getByLabel("Go to slide").selectOption("insight");
   const materials = page
     .locator("#insight")
-    .getByRole("button", { name: /Materials/ });
+    .getByRole("button", { name: /MATERIALS/ });
   await materials.click();
   await expect(materials).toHaveAttribute("aria-pressed", "true");
-  await page.getByLabel("Go to slide").selectOption("how-it-could-work");
-  const decision = page
-    .locator("#how-it-could-work")
-    .getByRole("button", { name: /Decision/ });
-  await decision.click();
-  await expect(decision).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("ArrowRight");
+  await expect(page).toHaveURL(/#insight$/);
+  await page.getByLabel("Go to slide").selectOption("solution");
+  const engineer = page
+    .locator("#solution")
+    .getByRole("button", { name: /ENGINEER/ });
+  await engineer.click();
+  await expect(engineer).toHaveAttribute("aria-pressed", "true");
   await page.getByLabel("Go to slide").selectOption("why-now");
   await page.locator("#why-now summary").click();
   await expect(
     page.locator('#why-now a[href*="vttresearch.com"]'),
   ).toBeVisible();
-  await page.getByLabel("Go to slide").selectOption("sources");
+  await page.getByLabel("Go to slide").selectOption("roadmap");
+  await expect(page.locator("#sources")).not.toHaveAttribute("open", "");
+  await page.locator("#sources summary").click();
   await expect(page.locator("#sources a")).toHaveCount(9);
+  await expect(page.locator("#sources p")).toHaveCount(9);
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect
+      .poll(() =>
+        page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+      )
+      .toBe(true);
+  }
   for (const link of await page.locator("#sources a").all()) {
     await expect(link).toHaveAttribute("href", /^https:\/\//);
     await expect(link).toHaveAttribute("rel", "noopener noreferrer");
   }
   expect(errors).toEqual([]);
+});
+
+test("shared links to merged slides and research remain usable", async ({
+  page,
+}) => {
+  for (const [from, to] of Object.entries(pitchHashAliases)) {
+    await page.goto(`/pitch/#${from}`);
+    await expect(page).toHaveURL(new RegExp(`#${to}$`));
+    await expect(page.getByLabel("Go to slide")).toHaveValue(to);
+    if (from === "sources")
+      await expect(page.locator("#sources")).toHaveAttribute("open", "");
+  }
 });

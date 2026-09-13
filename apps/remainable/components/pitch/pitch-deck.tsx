@@ -77,6 +77,10 @@ export function PitchDeck({
       const fragment = window.location.hash.slice(1);
       const target = pitchHashAliases[fragment] ?? fragment;
       const index = slides.findIndex((slide) => slide.id === target);
+      if (fragment === "sources") {
+        const sources = document.getElementById("sources");
+        if (sources instanceof HTMLDetailsElement) sources.open = true;
+      }
       if (index >= 0) goTo(index, false, true);
       else if (initial) goTo(0, false, true);
     };
@@ -169,9 +173,7 @@ export function PitchDeck({
         className={styles.toolbar}
         aria-label="Pitch deck navigation"
       >
-        <div className={styles.deckLabel}>
-          Pitch Deck<span>WORKING DRAFT</span>
-        </div>
+        <div className={styles.deckLabel}>Pitch Deck</div>
         <label className={styles.contents}>
           <span className={styles.srOnly}>Go to slide</span>
           <select

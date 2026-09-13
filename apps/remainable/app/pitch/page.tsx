@@ -6,7 +6,7 @@ import { pitchSlides } from "@/components/pitch/slides";
 export const metadata: Metadata = {
   title: "Pitch Deck",
   description:
-    "What can remain? Sonya Gadomska’s early-stage exploration of building evidence, engineering and reuse.",
+    "What can remain? AI-assisted assessment of damaged buildings. A short pitch by Sonya Gadomska.",
 };
 
 export default function PitchPage() {

@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import type { PitchSlideData } from "./slides";
-import { technologyPlan } from "./slides";
 import { researchSources, type SourceId } from "./sources";
 import styles from "./pitch.module.css";
 
@@ -40,10 +39,16 @@ function ResearchLinks({
     </ol>
   );
 }
-export function SlideSources({ ids }: { ids: readonly SourceId[] }) {
+export function SlideSources({
+  ids,
+  detailed = false,
+}: {
+  ids: readonly SourceId[];
+  detailed?: boolean;
+}) {
   if (!ids.length) return null;
   return (
-    <details className={styles.sources}>
+    <details className={styles.sources} id={detailed ? "sources" : undefined}>
       <summary>
         Sources / research{" "}
         <span>
@@ -55,7 +60,7 @@ export function SlideSources({ ids }: { ids: readonly SourceId[] }) {
             .join(" ")}
         </span>
       </summary>
-      <ResearchLinks ids={ids} />
+      <ResearchLinks ids={ids} expanded={detailed} />
     </details>
   );
 }
@@ -96,9 +101,6 @@ function Hierarchy({ items }: { items: readonly Item[] }) {
     <div className={styles.hierarchy} data-pitch-interactive>
       <div className={styles.drawingPanel}>
         <BuildingDrawing active={active} />
-        <span className={styles.technicalLabel}>
-          CONCEPT / NOT A BUILDING ASSESSMENT
-        </span>
       </div>
       <ol className={styles.hierarchyList}>
         {items.map((item, index) => (
@@ -152,44 +154,6 @@ function Sequence({ items }: { items: readonly Item[] }) {
   );
 }
 
-function Technology({ items }: { items: readonly Item[] }) {
-  const [active, setActive] = useState(0);
-  return (
-    <div className={styles.technology} data-pitch-interactive>
-      <div className={styles.pathOptions}>
-        {items.map((item, index) => (
-          <button
-            key={item.label}
-            type="button"
-            aria-pressed={active === index}
-            onClick={() => setActive(index)}
-          >
-            <span className={styles.technicalLabel}>
-              PATH {index === 0 ? "A" : "B"}
-            </span>
-            <strong>{item.label}</strong>
-            <span>{item.text}</span>
-          </button>
-        ))}
-      </div>
-      <p className={styles.pathNote} aria-live="polite">
-        {technologyPlan.decisions[active]}
-      </p>
-      <details className={styles.sources}>
-        <summary>The small first prototype</summary>
-        <dl className={styles.stack}>
-          {technologyPlan.stack.map((item) => (
-            <div key={item.label}>
-              <dt>{item.label}</dt>
-              <dd>{item.text}</dd>
-            </div>
-          ))}
-        </dl>
-      </details>
-    </div>
-  );
-}
-
 export function PitchSlideContent({ slide }: { slide: PitchSlideData }) {
   const items = slide.items ?? [];
   switch (slide.layout) {
@@ -197,8 +161,6 @@ export function PitchSlideContent({ slide }: { slide: PitchSlideData }) {
       return <Hierarchy items={items} />;
     case "sequence":
       return <Sequence items={items} />;
-    case "technology":
-      return <Technology items={items} />;
     case "research":
       return <ResearchLinks ids={slide.sources ?? []} expanded />;
     case "cover":
@@ -206,9 +168,6 @@ export function PitchSlideContent({ slide }: { slide: PitchSlideData }) {
         <div className={styles.coverContent}>
           <div className={styles.coverDrawing}>
             <BuildingDrawing />
-            <span className={styles.technicalLabel}>
-              REMAINABLE / A QUESTION IN PROGRESS
-            </span>
           </div>
           {items.map((item) => (
             <div className={styles.noteItem} key={item.label}>

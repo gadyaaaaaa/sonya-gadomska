@@ -1,27 +1,23 @@
-# Remainable working pitch
+# Remainable short pitch
 
 Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 
-Route: `/pitch/`, linked from the desktop and mobile menu. The first content version has 19 slides, from “What can remain?” to the research notes. The original navigation, presentation controls, keyboard handling and site palette are retained.
+Route: `/pitch/`, linked from the desktop and mobile menu. Ten slides follow the supplied short-pitch brief: Remainable, Idea, Problem, Solution, Why Now, Customer & Market, Competition, Technology, Founder & Team, Next Steps.
 
-## Editing the story
+The existing visual design, CSS, keyboard controls, scroll behavior, presentation mode, progress indicator and numbering system are unchanged. Content uses the existing slide layouts. Repeated draft/status labels and the detailed technology implementation panel have been removed.
 
-`slides.ts` holds ordered slide data: stable `id`, menu `title`, display `heading`, `status`, `intro`, labelled `items`, `layout`, `note` and source IDs. Move an entry to reorder it; numbering, contents and progress follow automatically. Keep IDs stable so existing links continue to work. The old `#ask` link maps to `#roadmap`, which includes the next ask. The proposed technical stack and experiment criteria are also data in this file.
+## Editing
 
-`pitch-slide.tsx` keeps the common slide frame. `slide-content.tsx` renders reusable content layouts and optional hierarchy/workflow/path-selection controls. `pitch-deck.tsx` handles navigation. `pitch.module.css` extends the original frame without new dependencies. Existing placeholder and image components remain available for later slides.
+`slides.ts` holds the ordered story: stable ID, menu title, display heading, intro, labelled items, layout and note. Moving entries changes numbering and navigation automatically. `pitchHashAliases` directs shared links for removed/merged slides to the relevant current slide.
 
-Source records live in `sources.ts`. Relevant slides have collapsible source links; the final research slide lists all nine with context. Company product descriptions are attributed and are not treated as independently tested capabilities. Research does not validate Remainable's customer demand or technical approach.
+All nine research records and links remain in `sources.ts`. Relevant slides retain expandable sources. Next Steps includes the full research notes in its expandable Sources area; research is no longer a numbered slide. `/pitch/#sources` opens that area on the final slide. The pitch ends on Next Steps, 10 / 10.
 
-All core text is visible without interacting. Selecting a hierarchy level highlights a conceptual drawing; selecting a workflow step highlights its explanation; selecting a technology path changes the experiment annotation. Sources and the proposed stack expand on demand. Interactive controls retain their own keyboard behavior. Reduced-motion settings and natural mobile scrolling are preserved.
-
-## Editorial boundaries
-
-Sonya is the sole founder and a first-year student, not a qualified structural engineer. Customer pain, buyer, value, AI feasibility, competitive gap, business model and possible markets remain hypotheses. The current app does not analyse uploaded images. AI/backend features are proposed, not enabled. No customers, advisers, pilots, partners, revenue, prices, market-size figures or performance metrics are invented. Ukraine is a possible learning environment within a global problem.
-
-Source links were reviewed on 13 September 2026. The ReThink / Helvetas / Skat PDF is a December 2023 publication, not a current market measurement. No unverified numerical or model-performance claims are used.
+Reusable drawing, hierarchy, workflow and source renderers remain in `slide-content.tsx`. The technology content now uses the existing flow layout rather than the longer comparison/implementation panel.
 
 ## Validation and rollback
 
-Lint, typecheck, production export and eight unit tests pass. Eight pitch browser scenarios cover all 19 slides at 1440, 820, 390 and 320px, navigation, source links, presentation mode, reduced/normal motion, controls and the old ask link. Screenshots were visually reviewed. The assessment code is unchanged; its previously documented full-suite reload failure is outside this change.
+Main story copy reduced from approximately 1,423 to 418 words (excluding research notes and repeated page chrome); 19 numbered sections reduced to 10. User-supplied wording is preserved, with the engineer-final-word line in the prominent supporting position on Solution.
 
-Pre-content source: `0c5f24e55d4f12d8899a6db3f7fa34e54b5f35b8`. Revert the content commit to return to the placeholder deck. The corresponding pre-content hosting backup is `/home/dls0/deploy-backups/remainable-pitch-content-20260913/www-before.tar.gz`.
+Lint, typecheck, production build and eight unit tests pass. Nine pitch browser scenarios verify all ten slides at desktop, tablet and mobile widths, keyboard/presentation controls, numbering, links to merged slides, retained optional controls, and all nine source links. Expanded sources are checked for overflow on mobile. Desktop and mobile screenshots were reviewed.
+
+Pre-shortening commit: `6b51cff03f5a124d692261ae7da0fb5869e64bba`. Revert the shortening commit to restore the 19-slide content. Hosting backup: `/home/dls0/deploy-backups/remainable-short-pitch-20260913/www-before.tar.gz`.
