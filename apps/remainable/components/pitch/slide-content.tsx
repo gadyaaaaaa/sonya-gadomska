@@ -1,6 +1,8 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 "use client";
 
+import Image from "next/image";
+import { photographs } from "./photographs";
 import { useState } from "react";
 import type { PitchSlideData } from "./slides";
 import { researchSources, type SourceId } from "./sources";
@@ -160,7 +162,19 @@ export function PitchSlideContent({ slide }: { slide: PitchSlideData }) {
     case "hierarchy":
       return <Hierarchy items={items} />;
     case "sequence":
-      return <Sequence items={items} />;
+      return <div className={styles.solutionEvidence}>
+        <div className={styles.solutionPhotos}>
+          {(["damage", "repair"] as const).map((id) => {
+            const photo = photographs[id];
+            return <figure key={id}>
+              <Image src={photo.src} width={1600} height={1200} alt={photo.alt} sizes="(max-width: 760px) 90vw, 27vw" />
+              <figcaption><span>{id === "damage" ? "DAMAGE + SURVIVING STRUCTURE" : "REPAIR + RETAINED STRUCTURE"}</span><a href={`/photo-credits.html#${id}`} target="_blank" rel="noopener noreferrer">Photo: {photo.creator}</a></figcaption>
+            </figure>;
+          })}
+        </div>
+        <p className={styles.evidenceLabel}>Illustrative workflow · separate buildings, not before and after.</p>
+        <Sequence items={items} />
+      </div>;
     case "research":
       return <ResearchLinks ids={slide.sources ?? []} expanded />;
     case "cover":

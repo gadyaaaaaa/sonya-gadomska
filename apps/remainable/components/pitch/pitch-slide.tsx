@@ -112,6 +112,6 @@ function DocumentaryPhoto({ id }: { id: NonNullable<PitchSlideData["photograph"]
   const photo = photographs[id];
   return <figure className={styles.photograph}>
     <Image src={photo.src} width={1600} height={id === "reuse" ? 900 : 1200} alt={photo.alt} loading={id === "damage" ? "eager" : "lazy"} fetchPriority={id === "damage" ? "high" : "auto"} sizes="(max-width: 760px) 90vw, 52vw" />
-    <figcaption><span>{photo.caption}</span><span><a href={photo.source} target="_blank" rel="noopener noreferrer">Photo: {photo.creator}</a> · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a> · resized</span></figcaption>
+    <figcaption><span>{photo.caption}</span><span><a href={`/photo-credits.html#${id}`} target="_blank" rel="noopener noreferrer">Photo: {photo.creator}</a></span></figcaption>
   </figure>;
 }
