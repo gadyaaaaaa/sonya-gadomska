@@ -1,9 +1,11 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
+import type { PhotographId } from "./photographs";
 import type { SourceId } from "./sources";
 export type PitchSlideData = {
   /** Stable URL fragment. Keep IDs when renaming/reordering. */
   id: string;
   title: string;
+  photograph?: PhotographId | "founder";
   heading?: string;
   type: "cover" | "statement" | "diagram" | "comparison";
   placeholders?: readonly string[];
@@ -42,6 +44,7 @@ export const pitchHashAliases: Readonly<Record<string, string>> = {
 export const pitchSlides: readonly PitchSlideData[] = [
   {
     id: "cover",
+    photograph: "damage",
     title: "REMAINABLE",
     heading: "What can remain?",
     type: "cover",
@@ -59,12 +62,12 @@ export const pitchSlides: readonly PitchSlideData[] = [
   },
   {
     id: "insight",
+    photograph: "repair",
     title: "IDEA",
     heading:
       "Before we demolish a building, we should know what we are throwing away.",
     type: "diagram",
-    intro:
-      "A damaged building may still contain useful value at several levels.",
+    intro: "",
     items: [
       {
         label: "BUILDING",
@@ -88,7 +91,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
       },
     ],
     layout: "hierarchy",
-    note: "Sometimes demolition is the right answer.",
+    note: "",
     sources: [],
     sourceDetails: false,
   },
@@ -136,7 +139,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
         text: "",
       },
       {
-        label: "WHAT NEEDS INSPECTION",
+        label: "INSPECTION",
         text: "",
       },
       {
@@ -155,6 +158,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
   },
   {
     id: "why-now",
+    photograph: "reuse",
     title: "WHY NOW",
     heading: "Circular construction meets better AI.",
     type: "statement",
@@ -162,15 +166,15 @@ export const pitchSlides: readonly PitchSlideData[] = [
     items: [
       {
         label: "CIRCULAR CONSTRUCTION",
-        text: "Buildings are increasingly viewed as resources: structures, components and materials can sometimes be retained or reused.",
+        text: "Keep more of what already exists.",
       },
       {
         label: "AI",
-        text: "Modern multimodal AI can interpret visual information that previously required much more manual review.",
+        text: "Understand visual information faster.",
       },
     ],
     layout: "pair",
-    note: "Can these two changes make it easier to understand what is worth keeping?",
+    note: "",
     sources: ["harvard", "rethink", "vtt", "eth"],
     sourceDetails: false,
   },
@@ -258,6 +262,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
   },
   {
     id: "why-us",
+    photograph: "founder",
     title: "FOUNDER & TEAM",
     heading: "Current team size: one.",
     type: "statement",

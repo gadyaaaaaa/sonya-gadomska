@@ -197,3 +197,24 @@ test("shared links to merged slides and research remain usable", async ({
       await expect(page.locator("#sources")).toHaveAttribute("open", "");
   }
 });
+
+test("documentary photography loads at large scale with attribution", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/pitch/");
+    await expect(page.locator("main section figure img")).toHaveCount(4);
+    for (const id of ["cover", "insight", "why-now", "why-us"]) {
+      await page.getByLabel("Go to slide").selectOption(id);
+      const photo = page.locator(`#${id} figure img`);
+      await photo.scrollIntoViewIfNeeded();
+      await expect.poll(() => photo.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+      await expect(photo).toHaveAttribute("alt", /[A-Za-z].{30,}/);
+      const box = await photo.boundingBox();
+      expect(box!.width).toBeGreaterThan(width * (id === "why-us" ? .35 : .4));
+      if (id !== "why-us") await expect(page.locator(`#${id} figcaption a`)).toHaveCount(2);
+      await page.screenshot({ path: `/private/tmp/pitch-photo-${width}-${id}.png` });
+    }
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});

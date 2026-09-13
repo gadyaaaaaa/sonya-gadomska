@@ -721,3 +721,32 @@
     break-inside: avoid;
   }
 }
+
+/* Documentary images remain uncropped, rectangular and individually attributed. */
+.slide[data-photo] .slideBody { grid-template-columns: .8fr 1.2fr; gap: 5%; }
+.photograph { margin: 0; min-width: 0; }
+.photograph img { display: block; width: 100%; height: auto; border-radius: 0; box-shadow: none; }
+.photograph figcaption { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 9px; display: grid; gap: 4px; color: var(--muted); font: 10px/1.5 ui-monospace, monospace; }
+.photograph figcaption a { text-decoration: underline; text-underline-offset: 2px; }
+.photoCopy { margin-top: 30px; }
+.photoCopy .coverDrawing, .photoCopy .drawingPanel { display: none; }
+.photoCopy .coverContent, .photoCopy .hierarchy { grid-template-columns: 1fr; }
+.slide[data-photo="damage"] .largeNumber { display: none; }
+.slide[data-photo="damage"] .noteItem { border: 0; }
+.slide[data-photo="repair"] .slideHeader h2 { font-size: clamp(30px, 3vw, 48px); }
+.slide[data-photo="repair"] .hierarchyList button { padding: 10px 8px; }
+.slide[data-photo="reuse"] .slideBody { grid-template-columns: 1.2fr .8fr; }
+.slide[data-photo="reuse"] .slideHeader { grid-column: 2; grid-row: 1; }
+.slide[data-photo="reuse"] .photograph { grid-column: 1; grid-row: 1; }
+.slide[data-photo="reuse"] .itemCollection { grid-template-columns: 1fr; }
+.slide[data-photo="founder"] .slideBody { grid-template-columns: 1.1fr .9fr; }
+.slide[data-photo="founder"] .slideHeader h2 { font-size: clamp(36px, 3.5vw, 56px); }
+@media (max-width: 760px) {
+  .slide[data-photo] .slideBody { grid-template-columns: 1fr; }
+  .slide[data-photo="reuse"] .slideHeader, .slide[data-photo="reuse"] .photograph { grid-column: auto; grid-row: auto; }
+  .slide[data-photo="repair"] .slideHeader h2 { font-size: clamp(30px, 8vw, 44px); }
+  .slide[data-photo="damage"] .slideBody { gap: 20px; }
+  .slide[data-photo="damage"] .photoCopy { margin-top: 16px; }
+}
+
+.coverBrand { font-size: 20px; letter-spacing: -.03em; font-weight: 700; margin-bottom: 24px; }

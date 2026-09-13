@@ -3,6 +3,7 @@ import Image, { type ImageProps } from "next/image";
 import type { ReactNode } from "react";
 import type { PitchSlideData } from "./slides";
 import { PitchSlideContent, SlideSources } from "./slide-content";
+import { photographs } from "./photographs";
 import styles from "./pitch.module.css";
 
 export function Placeholder({ children }: { children: ReactNode }) {
@@ -46,6 +47,7 @@ export function PitchSlide({
     <section
       id={slide.id}
       className={styles.slide}
+      data-photo={slide.photograph}
       data-type={slide.type}
       data-layout={slide.layout}
       data-populated={Boolean(slide.heading)}
@@ -60,6 +62,7 @@ export function PitchSlide({
           <span className={styles.largeNumber} aria-hidden="true">
             {String(index + 1).padStart(2, "0")}
           </span>
+          {slide.id === "cover" && <p className={styles.coverBrand}>REMAINABLE</p>}
           <Heading id={`${slide.id}-title`} tabIndex={-1}>
             {slide.heading ?? slide.title}
           </Heading>
@@ -70,8 +73,9 @@ export function PitchSlide({
             </p>
           )}
           {slide.intro && <p className={styles.slideIntro}>{slide.intro}</p>}
+          {slide.photograph && <div className={styles.photoCopy}><PitchSlideContent slide={slide} /></div>}
         </header>
-        <SlideContent>
+        {slide.photograph ? <DocumentaryPhoto id={slide.photograph} /> : <SlideContent>
           {children ??
             (slide.items ? (
               <PitchSlideContent slide={slide} />
@@ -80,7 +84,7 @@ export function PitchSlide({
                 <Placeholder key={`${i}-${label}`}>{label}</Placeholder>
               ))
             ))}
-        </SlideContent>
+        </SlideContent>}
       </div>
       {slide.note && <p className={styles.slideNote}>{slide.note}</p>}
       {slide.layout !== "research" && (
@@ -98,4 +102,16 @@ export function PitchSlide({
       </footer>
     </section>
   );
+}
+
+function DocumentaryPhoto({ id }: { id: NonNullable<PitchSlideData["photograph"]> }) {
+  if (id === "founder") return <figure className={styles.photograph}>
+    <Image src="/sonya-gadomska-editorial.jpg" width={900} height={900} alt="Black-and-white portrait of Sonya Gadomska in graduation attire." sizes="(max-width: 760px) 90vw, 45vw" />
+    <figcaption>Sonya Gadomska</figcaption>
+  </figure>;
+  const photo = photographs[id];
+  return <figure className={styles.photograph}>
+    <Image src={photo.src} width={1600} height={id === "reuse" ? 900 : 1200} alt={photo.alt} loading={id === "damage" ? "eager" : "lazy"} fetchPriority={id === "damage" ? "high" : "auto"} sizes="(max-width: 760px) 90vw, 52vw" />
+    <figcaption><span>{photo.caption}</span><span><a href={photo.source} target="_blank" rel="noopener noreferrer">Photo: {photo.creator}</a> · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a> · resized</span></figcaption>
+  </figure>;
 }
