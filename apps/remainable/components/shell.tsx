@@ -11,6 +11,7 @@ export function Header() {
       </Link>
       <nav aria-label="Main navigation">
         <Link href="/assessment/?sample=1">Sample assessment</Link>
+        <Link href="/pitch/">Pitch Deck</Link>
         <Link href="/new/" className="nav-cta">
           Start an assessment <ArrowUpRight size={16} />
         </Link>

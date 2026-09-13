@@ -2,7 +2,7 @@
 
 Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 
-Route: `/pitch/`. This page deliberately contains only working titles and neutral placeholders. It is not linked from the main navigation.
+Route: `/pitch/`. This page deliberately contains only working titles and neutral placeholders. The main navigation includes a Pitch Deck link, including on mobile.
 
 ## Editing slides
 
@@ -17,3 +17,9 @@ To introduce a real interactive slide later, create its own component and pass i
 Desktop slides use a minimum viewport height and gentle scroll snapping. Mobile uses natural content height and ordinary scrolling. Arrows, Home and End navigate when focus is outside interactive controls. Slide headings receive focus on keyboard/button navigation. Use the contents selector to jump to any slide. Presentation mode hides the existing header/footer without using fullscreen; Exit or Escape restores them. Reduced-motion preferences disable smooth transitions and snapping.
 
 Validation: lint, typecheck, unit tests, production build, and `tests/e2e/pitch.spec.ts` (desktop/tablet/mobile, deep links, hash/history, keyboard, presentation mode and scrolling).
+
+## Menu release validation and rollback
+
+The menu link is checked at 1440, 820, 390 and 320px. Lint, typecheck, all seven unit tests and production build pass; all seven pitch browser checks pass. A temporary 18-slide deck also verified adding/reordering, numbering and navigation and was removed before the release build. The existing assessment reload test fails in the full suite on both the unchanged baseline and this release; assessment code was not changed.
+
+The page framework is commit `49cc0d4`; revert the following menu commit to remove the menu link. A hosting backup is retained in `/home/dls0/deploy-backups/remainable-pitch-menu-20260913/` for restoring the pre-release website.

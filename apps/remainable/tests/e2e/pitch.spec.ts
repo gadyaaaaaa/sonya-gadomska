@@ -1,6 +1,18 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 import { test, expect } from "@playwright/test";
 
+test("pitch link is reachable from the desktop and mobile menu", async ({ page }) => {
+  for (const width of [1440, 820, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    const link = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Pitch Deck" });
+    await expect(link).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await link.click();
+    await expect(page.getByRole("heading", { name: "Cover", exact: true })).toBeVisible();
+  }
+});
+
 test("pitch deep links, keyboard, controls and presentation mode", async ({
   page,
 }) => {
