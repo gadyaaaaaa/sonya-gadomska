@@ -48,7 +48,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
     title: "REMAINABLE",
     heading: "What can remain?",
     type: "cover",
-    intro: "AI-assisted assessment of damaged buildings.",
+    intro: "Building-damage documentation for professional review.",
     items: [
       {
         label: "Sonya Gadomska",
@@ -128,7 +128,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
     title: "SOLUTION",
     heading: "Turn building evidence into structured questions for engineers.",
     type: "diagram",
-    intro: "The AI gets an opinion. The engineer gets the final word.",
+    intro: "A documentation prototype today. AI-assisted interpretation is a future experiment.",
     items: [
       {
         label: "PHOTOS",
@@ -152,7 +152,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
       },
     ],
     layout: "sequence",
-    note: "AI helps organise the evidence. Engineers make the decisions.",
+    note: "Uploaded photographs are not analysed. Engineering decisions remain with qualified professionals.",
     sources: [],
     sourceDetails: false,
   },
@@ -181,21 +181,21 @@ export const pitchSlides: readonly PitchSlideData[] = [
   {
     id: "who-it-is-for",
     title: "CUSTOMER & MARKET",
-    heading: "Start where the problem is unusually visible.",
+    heading: "Test who needs the handover most.",
     type: "statement",
     intro: "",
     items: [
       {
-        label: "BEACHHEAD",
-        text: "Engineering and AEC firms assessing damaged buildings, including firms involved in Ukrainian reconstruction.",
+        label: "ROUTE A / SOFTWARE",
+        text: "Engineering consultancies: a documentation workspace their own staff use. Team subscription is a pricing hypothesis.",
       },
       {
-        label: "EXPANSION",
-        text: "Existing buildings → post-disaster assessment → renovation & adaptive reuse → circular construction",
+        label: "ROUTE B / SERVICE",
+        text: "Reconstruction organisations: help preparing evidence for their engineering reviewers. A fee per project is an alternative hypothesis.",
       },
     ],
     layout: "notes",
-    note: "Ukraine can be a place to learn. The problem is global.",
+    note: "Compare the need, purchasing process and delivery effort before choosing a route. Neither model is validated.",
     sources: [],
     sourceDetails: false,
   },
@@ -234,7 +234,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
   {
     id: "technology",
     title: "TECHNOLOGY",
-    heading: "Start with the simplest experiment.",
+    heading: "Test documentation before automation.",
     type: "statement",
     intro: "",
     items: [
@@ -243,11 +243,11 @@ export const pitchSlides: readonly PitchSlideData[] = [
         text: "",
       },
       {
-        label: "EXISTING MULTIMODAL AI",
+        label: "BUILDING DETAILS + NOTES",
         text: "",
       },
       {
-        label: "STRUCTURED OBSERVATIONS",
+        label: "DOCUMENTATION PACKAGE",
         text: "",
       },
       {
@@ -256,7 +256,7 @@ export const pitchSlides: readonly PitchSlideData[] = [
       },
     ],
     layout: "flow",
-    note: "Later: 3D / spatial context → specialised data → specialised models",
+    note: "Current prototype: browser-local records and printable reports. Future experiment: evaluate AI assistance with qualified reviewers and authorised material.",
     sources: [],
     sourceDetails: false,
   },
@@ -296,15 +296,15 @@ export const pitchSlides: readonly PitchSlideData[] = [
       },
       {
         label: "TEST",
-        text: "Compare AI observations with professional observations on real authorised images.",
+        text: "Compare evidence preparation and review with existing workflows, using authorised material.",
       },
       {
         label: "BUILD",
-        text: "Create one very small working workflow.",
+        text: "Refine the existing prototype around the task practitioners identify.",
       },
       {
         label: "TRY",
-        text: "Put it in front of engineers and see whether it saves useful work.",
+        text: "Test a bounded offer with a budget owner. Measure delivery effort and willingness to pay.",
       },
     ],
     layout: "flow",

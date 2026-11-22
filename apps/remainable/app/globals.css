@@ -1581,6 +1581,18 @@ summary {
 }
 
 /* Founder introduction — Copyright (c) 2026 Sonya Gadomska. */
+.research-actions { margin-top: 36px; flex-wrap: wrap; }
+.research-page { max-width: 1060px; margin: 0 auto; padding: 64px 24px; }
+.research-page h1 { font-size: clamp(42px, 6vw, 78px); margin: 20px 0 28px; }
+.research-page h2 { font-size: clamp(30px, 4vw, 42px); margin: 44px 0 20px; }
+.research-page h3 { font-size: 24px; margin: 0 0 14px; }
+.research-page p, .research-page li { font-size: 17px; line-height: 1.7; max-width: 78ch; }
+.research-page p { margin-bottom: 18px; }
+.research-page ul { padding-left: 24px; list-style: disc; }
+.research-page li { margin-bottom: 12px; }
+.research-routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.research-page a:not(.button) { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 760px) { .research-routes { grid-template-columns: 1fr; gap: 24px; } }
 .founder {
   display: grid;
   grid-template-columns: minmax(240px, 340px) minmax(0, 650px);

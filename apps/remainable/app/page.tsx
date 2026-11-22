@@ -28,15 +28,15 @@ export default function Home() {
             </p>
             <div className="actions">
               <Link className="button primary" href="/new/">
-                Start an assessment <ArrowUpRight size={19} />
+                Try the prototype <ArrowUpRight size={19} />
               </Link>
               <Link className="text-link" href="/report/?sample=1">
                 View sample report <ArrowRight size={17} />
               </Link>
             </div>
             <p className="fineprint hero-disclaimer">
-              Remainable supports preliminary documentation and triage. It does
-              not determine structural safety or replace an engineer.
+              Early documentation prototype. Uploaded photos are not analysed.
+              Remainable does not determine structural safety or replace an engineer.
             </p>
           </div>
           <div className="hero-drawing">
@@ -75,17 +75,17 @@ export default function Home() {
             [
               "01",
               "Capture",
-              "Upload photographs or conduct a guided site survey.",
+              "Record building details and add photographs you are authorised to use.",
             ],
             [
               "02",
-              "Triage",
-              "Organize visible damage, uncertainty and missing evidence.",
+              "Organise",
+              "Add notes and categories. Example findings belong only to the fictional sample.",
             ],
             [
               "03",
               "Review",
-              "Prepare an evidence package for a qualified engineer.",
+              "Export a documentation package to discuss with a qualified engineer.",
             ],
           ].map(([n, title, body]) => (
             <article key={n}>
@@ -116,6 +116,33 @@ export default function Home() {
             Fire · Severe weather
           </p>
           <span className="tag">Phase 1 · Local demonstration</span>
+        </div>
+      </section>
+      <section className="section process" aria-labelledby="research-heading">
+        <div className="section-heading">
+          <p className="eyebrow">WHAT WE ARE TESTING</p>
+          <h2 id="research-heading">A useful handover<br />starts with a real workflow.</h2>
+        </div>
+        <div className="process-grid">
+          <article>
+            <span className="index">01</span>
+            <h3>Engineering teams</h3>
+            <p>Can a clearer evidence package reduce the work of preparing and reviewing building documentation? We want to compare it with the tools teams already use.</p>
+          </article>
+          <article>
+            <span className="index">02</span>
+            <h3>A local prototype</h3>
+            <p>Building details, photo notes, report versions and printable reports. Data stays in this browser. No AI analysis or professional review is performed.</p>
+          </article>
+          <article>
+            <span className="index">03</span>
+            <h3>Practitioner feedback</h3>
+            <p>We are seeking conversations with engineers and reconstruction coordinators about evidence preparation, missing information and the cost of rework.</p>
+          </article>
+        </div>
+        <div className="actions research-actions">
+          <Link className="button primary" href="/research/">Explore the research plan <ArrowUpRight size={19} /></Link>
+          <a className="text-link" href="https://www.linkedin.com/in/sonya-gadomska-4833113b6/" target="_blank" rel="noopener noreferrer">Contact Sonya on LinkedIn <ArrowUpRight size={17} /></a>
         </div>
       </section>
       <section className="section founder" aria-labelledby="founder-heading">
