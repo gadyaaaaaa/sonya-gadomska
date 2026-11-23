@@ -113,6 +113,9 @@ export type Screening = {
   photoIds: string[];
   mode: "fictional-example" | "documentation-only" | "muse";
   status: "additional_evidence_recommended" | "seriously_insufficient_evidence";
+  evidenceStatus?: "insufficient" | "limited";
+  evidenceReason?: string;
+  informationRequests?: string[];
   priority: "routine" | "elevated" | "high" | "urgent" | null;
   buildingSnapshot?: Building;
   evidenceSnapshot?: Photo[];

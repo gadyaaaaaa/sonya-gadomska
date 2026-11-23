@@ -10,7 +10,7 @@ test("complete fictional assessment, evidence viewer, revision and printable rep
   await page.getByRole("link", { name: "Start an assessment" }).last().click();
   await page.getByRole("button", { name: "Use the fictional example" }).click();
   await expect(
-    page.getByRole("heading", { name: "Additional evidence recommended" }),
+    page.getByRole("heading", { name: "Some visible conditions identified" }),
   ).toBeVisible();
   await expect(
     page.getByText("Fictional example findings", { exact: true }),
@@ -75,7 +75,9 @@ test("real image flow remains unreviewed, survives reload and validates upload l
       exact: true,
     })
     .click();
-  await expect(page.getByText("Not assigned", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Damage has not been assessed" }),
+  ).toBeVisible();
   await expect(
     page.getByText("No image observations generated.", { exact: false }),
   ).toBeVisible();
@@ -117,6 +119,18 @@ test("photo-first Muse review and optional refinement preserve historical result
           summary: payload.building.country
             ? "Refined with supplied country."
             : "Initial photo review.",
+          evidenceStatus: "insufficient",
+          evidenceReason: "The image does not show a building.",
+          photoRequests: [
+            {
+              what: "A clear exterior elevation",
+              why: "We need a recognizable building view.",
+              angle:
+                "Frame the whole building from an already-cleared location.",
+              category: "exterior",
+            },
+          ],
+          informationRequests: ["When was this photograph taken?"],
           observations: [],
           concerns: [],
           nonStructural: [],
@@ -151,6 +165,16 @@ test("photo-first Muse review and optional refinement preserve historical result
   await expect(
     page.getByText("Initial photo review.", { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Not enough data to assess damage" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "A clear exterior elevation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("When was this photograph taken?", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Add building details" }).click();
   await page.getByLabel("Country", { exact: true }).selectOption("Canada");
   await page.getByLabel("Province, region or district").selectOption("Ontario");
   await page

@@ -23,3 +23,7 @@ Run lint, typecheck, unit tests, browser flow tests, production build and PHP li
 Before release, archive the current webroot and record its checksum. Preserve `.htaccess` and other host configuration. The earlier source revision is `1949dc25d1a5d16d9f36ae10cb3d4a21da16cf84`.
 
 Rollback: restore the webroot archive, disable/remove the private Muse configuration to stop new calls, and revert the feature commit in GitHub. Do not delete browser data or change `remainable-local-v1`. Existing records and prior versions remain intact. Existing historical reports lacking a snapshot retain their current recorded building context when they are next refined; the app cannot reconstruct past context that was never stored.
+
+## Evidence sufficiency and next steps
+
+New reviews return an explicit `insufficient` or `limited` evidence status, a short reason, concrete photo requests (what, why, framing), and missing information requests. No observations always means insufficient evidence; it never means no damage. The browser and printable report show the same evidence status and next steps. Historical reports are preserved; where tailored requests were not stored, the interface labels a general starting checklist instead. Counts describe photos and observations, not confidence, safety or damage percentages.

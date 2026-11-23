@@ -10,6 +10,27 @@ const text = z.string().min(1).max(3000);
 const texts = z.array(text).max(30);
 export const museResultSchema = z.object({
   summary: text,
+  evidenceStatus: z.enum(["insufficient", "limited"]).optional(),
+  evidenceReason: text.optional(),
+  photoRequests: z
+    .array(
+      z.object({
+        what: text,
+        why: text,
+        angle: text,
+        category: z.enum([
+          "unknown",
+          "exterior",
+          "interior",
+          "roof",
+          "basement",
+          "structural element",
+        ]),
+      }),
+    )
+    .max(6)
+    .optional(),
+  informationRequests: z.array(text).max(8).optional(),
   observations: z
     .array(
       z.object({
@@ -53,11 +74,21 @@ export function makeMuseScreening(a: Assessment, value: unknown): Screening {
     photoIds: real.map((p) => p.id),
     mode: "muse",
     model: "muse-ember-1.0",
-    status: "additional_evidence_recommended",
+    evidenceStatus: !result.observations.length
+      ? "insufficient"
+      : (result.evidenceStatus ?? "limited"),
+    status:
+      !result.observations.length || result.evidenceStatus === "insufficient"
+        ? "seriously_insufficient_evidence"
+        : "additional_evidence_recommended",
     priority: null,
     buildingSnapshot: structuredClone(a.building),
     evidenceSnapshot: structuredClone(real),
-    followups: [],
+    followups: (result.photoRequests ?? []).map((f, i) => ({
+      ...f,
+      id: `request-${i + 1}`,
+      safety: ACCESS_GUIDANCE,
+    })),
     limitations: [
       ...result.limitations,
       DISCLAIMER,

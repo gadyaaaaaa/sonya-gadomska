@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useAssessment } from "./use-assessment";
+import { evidencePlan } from "@/lib/evidence-plan";
 import { reviewForDisplay } from "@/lib/review-display";
 import { COPYRIGHT, DISCLAIMER } from "@/lib/policy";
 export function Report() {
@@ -32,6 +33,7 @@ export function Report() {
       </section>
     );
   const building = r.buildingSnapshot ?? a.building;
+  const plan = evidencePlan(r, building);
   const photos =
     r.evidenceSnapshot ??
     Array.from(
@@ -88,6 +90,10 @@ export function Report() {
               : "No AI model has run. Example findings refer only to labeled schematic illustrations, not user-supplied photos."}
           </p>
         </aside>
+        <section className="report-evidence-status">
+          <h2>{plan.title}</h2>
+          <p>{plan.reason}</p>
+        </section>
         <section>
           <h2>01 / Assessment information</h2>
           <dl className="report-info">
@@ -180,11 +186,13 @@ export function Report() {
         </section>
         <section>
           <h2>07 / Missing evidence</h2>
+          <h3>Additional information requested</h3>
+          {list(plan.information, "No specific additional details requested.")}
           {list(r.missing)}
         </section>
         <section>
           <h2>08 / Recommended additional documentation</h2>
-          {r.followups.map((f) => (
+          {plan.photos.map((f) => (
             <div className="report-request" key={f.id}>
               <h3>
                 {f.id}: {f.what}

@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   ImagePlus,
 } from "lucide-react";
+import { EvidenceOverview } from "./evidence-overview";
 import { reviewForDisplay } from "@/lib/review-display";
 import { BuildingDetails } from "./building-details";
 import { analyzeWithMuse } from "@/lib/ai/muse";
@@ -28,7 +29,7 @@ import {
   type Photo,
   type Screening,
 } from "@/lib/types";
-import { ACCESS_GUIDANCE, PRIORITIES } from "@/lib/policy";
+import { ACCESS_GUIDANCE } from "@/lib/policy";
 export function AssessmentWorkspace() {
   const {
     assessment: a,
@@ -567,36 +568,7 @@ function Results({
   const building = r.buildingSnapshot ?? a.building;
   return (
     <>
-      <section className="result-summary">
-        <div>
-          <p className="eyebrow">REMAINABLE PRELIMINARY DAMAGE SCREENING</p>
-          <h2>
-            {r.status === "additional_evidence_recommended"
-              ? "Additional evidence recommended"
-              : "Evidence awaits professional review"}
-          </h2>
-          <p>{r.summary}</p>
-          <span className="tag">
-            {r.mode === "fictional-example"
-              ? "Fictional example findings"
-              : r.mode === "muse"
-                ? "Remainable visual review · Preliminary"
-                : "Documentation only · No analysis performed"}
-          </span>
-        </div>
-        <aside>
-          <p className="eyebrow">REVIEW PRIORITY</p>
-          <strong className="priority">{r.priority || "Not assigned"}</strong>
-          <p>
-            {r.priority
-              ? PRIORITIES[r.priority]
-              : r.mode === "muse"
-                ? "Remainable reviewed visible evidence; review priority requires a qualified professional."
-                : "No model or engineer has reviewed the uploaded evidence."}
-          </p>
-          <small>Priority is not a safety classification.</small>
-        </aside>
-      </section>
+      <EvidenceOverview result={r} building={building} onUpload={onUpload} />
       <div className="results-layout">
         <div>
           <section className="result-section">
@@ -605,7 +577,23 @@ function Results({
             </h2>
             {r.observations.length ? (
               r.observations.map((o, i) => (
-                <article className="finding" key={i}>
+                <article className="finding visual-finding" key={i}>
+                  {all.find((p) => p.id === o.imageId) && (
+                    <button
+                      className="finding-photo"
+                      aria-label={`View evidence for observation ${i + 1}`}
+                      onClick={() => {
+                        const p = all.find((p) => p.id === o.imageId);
+                        if (p) onPhoto(p);
+                      }}
+                    >
+                      <img
+                        src={all.find((p) => p.id === o.imageId)!.src}
+                        alt={`Evidence for observation ${i + 1}`}
+                      />
+                    </button>
+                  )}
+
                   <div>
                     <span className="index">
                       {String(i + 1).padStart(2, "0")}
@@ -641,7 +629,7 @@ function Results({
             number="03"
             title="Non-structural damage"
             items={r.nonStructural}
-            empty="Not assessed in this documentation-only version."
+            empty="Not established from the available evidence."
           />
           <section className="result-section missing-section">
             <h2>
@@ -697,35 +685,6 @@ function Results({
           )}
         </aside>
       </div>
-      <section className="followups">
-        <div className="section-title">
-          <div>
-            <p className="eyebrow">05 / THE NEXT USEFUL VIEW</p>
-            <h2>What to photograph next.</h2>
-          </div>
-          <button className="button secondary" onClick={onUpload}>
-            <Upload size={17} />
-            Upload requested photos
-          </button>
-        </div>
-        <p>
-          Suggested additional evidence. A qualified professional must determine
-          which views are appropriate for the site.
-        </p>
-        <div className="request-grid">
-          {r.followups.map((f, i) => (
-            <article key={f.id}>
-              <span className="eyebrow">PHOTO REQUEST / 0{i + 1}</span>
-              <h3>{f.what}</h3>
-              <h4>Why this view</h4>
-              <p>{f.why}</p>
-              <h4>Position & angle</h4>
-              <p>{f.angle}</p>
-              <p className="safety-caption">{f.safety}</p>
-            </article>
-          ))}
-        </div>
-      </section>
       <ListSection
         number="06"
         title="Recommended professional actions"
@@ -742,7 +701,7 @@ function Results({
       <div className="report-cta">
         <div>
           <FileText size={30} strokeWidth={1} />
-          <h2>Ready for a professional review.</h2>
+          <h2>Your evidence record</h2>
           <p>Open the report with its evidence appendix and limitations.</p>
         </div>
         <Link className="button primary" href={`/report/?id=${a.id}`}>

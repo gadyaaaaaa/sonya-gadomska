@@ -7,6 +7,10 @@ export function reviewForDisplay(review: Screening): Screening {
   return {
     ...review,
     summary: text(review.summary),
+    evidenceReason: review.evidenceReason
+      ? text(review.evidenceReason)
+      : undefined,
+    informationRequests: review.informationRequests?.map(text),
     observations: review.observations.map((o) => ({
       ...o,
       component: text(o.component),

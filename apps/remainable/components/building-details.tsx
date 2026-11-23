@@ -60,7 +60,7 @@ export function BuildingDetails({
     </label>
   );
   return (
-    <section className="result-section context-form">
+    <section id="building-details" className="result-section context-form">
       <h2>Refine with building details</h2>
       <p>
         Everything is optional. Add what you know; your first result will stay
