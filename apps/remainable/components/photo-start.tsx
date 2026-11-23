@@ -76,9 +76,9 @@ export function PhotoStart() {
         </p>
       )}
       <p className="fineprint">
-        Uploads are saved in this browser. Photographs are sent to Muse only
-        when you choose to run an AI review. This is preliminary documentation,
-        not a structural safety assessment.
+        Uploads are saved in this browser. Photographs are sent to Remainable
+        only when you choose to run an AI review. This is preliminary
+        documentation, not a structural safety assessment.
       </p>
       <button
         className="text-link add-sample"

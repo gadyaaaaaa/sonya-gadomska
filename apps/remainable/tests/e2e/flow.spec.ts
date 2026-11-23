@@ -138,7 +138,7 @@ test("photo-first Muse review and optional refinement preserve historical result
     ),
   });
   await page
-    .getByRole("button", { name: "Get first result with Muse" })
+    .getByRole("button", { name: "Get first result with Remainable" })
     .click();
   await expect(page.locator(".error[role=alert]")).toContainText(
     "Please agree",
@@ -146,7 +146,7 @@ test("photo-first Muse review and optional refinement preserve historical result
   expect(payloads).toHaveLength(0);
   await page.getByRole("checkbox").check();
   await page
-    .getByRole("button", { name: "Get first result with Muse" })
+    .getByRole("button", { name: "Get first result with Remainable" })
     .click();
   await expect(
     page.getByText("Initial photo review.", { exact: true }),

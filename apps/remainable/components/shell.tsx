@@ -39,8 +39,8 @@ export function DemoNotice() {
     <aside className="demo-notice">
       <span className="live-dot" /> <strong>Working prototype</strong>
       <span>
-        Records stay in this browser. AI review sends selected evidence to Muse.
-        Example findings remain labeled as fictional.
+        Records stay in this browser. AI review sends selected evidence to
+        Remainable. Example findings remain labeled as fictional.
       </span>
     </aside>
   );

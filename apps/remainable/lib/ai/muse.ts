@@ -40,7 +40,7 @@ export function makeMuseScreening(a: Assessment, value: unknown): Screening {
   const real = a.photos.filter((p) => !p.isSample);
   if (result.observations.some((o) => !real.some((p) => p.id === o.imageId)))
     throw new Error(
-      "Muse returned an observation without a matching photograph. Please retry.",
+      "Remainable returned an observation without a matching photograph. Please retry.",
     );
   if (hasProhibitedConclusion(JSON.stringify(result)))
     throw new Error(
@@ -66,8 +66,8 @@ export function makeMuseScreening(a: Assessment, value: unknown): Screening {
     actions: [...result.actions, ACCESS_GUIDANCE],
     changes: [
       a.versions.length
-        ? "New Muse review using the current photographs and supplied building details. Earlier reports are preserved."
-        : "Initial Muse visual review. Missing building details have not been assumed.",
+        ? "New Remainable review using the current photographs and supplied building details. Earlier reports are preserved."
+        : "Initial Remainable visual review. Missing building details have not been assumed.",
     ],
   };
 }
@@ -75,7 +75,7 @@ export async function analyzeWithMuse(a: Assessment): Promise<Screening> {
   const photos = a.photos.filter((p) => !p.isSample);
   if (!photos.length)
     throw new Error(
-      "Add a real photograph for Muse review. Example illustrations use demo screening.",
+      "Add a real photograph for Remainable review. Example illustrations use demo screening.",
     );
   const response = await fetch("/api/muse.php", {
     method: "POST",
@@ -94,13 +94,13 @@ export async function analyzeWithMuse(a: Assessment): Promise<Screening> {
   });
   if (!response.headers.get("content-type")?.includes("application/json"))
     throw new Error(
-      "Muse is not configured on this server yet. Your photographs remain saved; try again later.",
+      "Remainable is not configured on this server yet. Your photographs remain saved; try again later.",
     );
   const data = await response.json();
   if (!response.ok)
     throw new Error(
       data.error ||
-        "Muse review could not finish. Your previous report is unchanged.",
+        "Remainable review could not finish. Your previous report is unchanged.",
     );
   return makeMuseScreening(a, data.result);
 }

@@ -69,3 +69,16 @@ test("Muse rejects fabricated image references, verdicts and malformed output", 
   );
   assert.throws(() => makeMuseScreening(a, { summary: "Incomplete" }));
 });
+
+test("older reports display Remainable branding without rewriting stored history", async () => {
+  const { reviewForDisplay } = await import("../lib/review-display");
+  const a = createAssessment({...emptyBuilding});
+  const original = makeMuseScreening(a, {...result, summary:"Muse reviewed this evidence."});
+  original.changes = ["Initial Muse visual review."];
+  const saved = JSON.stringify(original);
+  const display = reviewForDisplay(original);
+  assert.equal(display.summary, "Remainable reviewed this evidence.");
+  assert.equal(display.changes[0], "Initial Remainable visual review.");
+  assert.equal(JSON.stringify(original), saved);
+  assert.equal(display.mode, "muse");
+});

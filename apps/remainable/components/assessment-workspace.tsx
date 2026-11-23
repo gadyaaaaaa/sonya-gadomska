@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   ImagePlus,
 } from "lucide-react";
+import { reviewForDisplay } from "@/lib/review-display";
 import { BuildingDetails } from "./building-details";
 import { analyzeWithMuse } from "@/lib/ai/muse";
 import type { Building } from "@/lib/types";
@@ -89,7 +90,7 @@ export function AssessmentWorkspace() {
     const real = a.photos.some((p) => !p.isSample);
     if (real && !documentationOnly && !consent) {
       setError(
-        "Please agree to send photographs and details to Muse before running the review.",
+        "Please agree to send photographs and details to Remainable before running the review.",
       );
       return;
     }
@@ -139,7 +140,8 @@ export function AssessmentWorkspace() {
         </Link>
       </section>
     );
-  const current = a.versions.at(-1);
+  const latest = a.versions.at(-1);
+  const current = latest ? reviewForDisplay(latest) : undefined;
   const mode = view ?? (current ? "results" : "photos");
   const changed =
     !!current &&
@@ -261,8 +263,8 @@ export function AssessmentWorkspace() {
               )}
               <p className="fineprint">
                 Photos are resized for review. Retain your originals separately.
-                Running a Muse review sends these photos and supplied details to
-                Meta.
+                Running a Remainable review sends these photos and supplied
+                details to its AI service for processing.
               </p>
             </section>
             <aside className="side-note photo-guidance">
@@ -392,9 +394,9 @@ export function AssessmentWorkspace() {
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
               />{" "}
-              I agree to send these photos and supplied details to Muse (Meta)
-              for a preliminary AI review. This is not a structural safety
-              assessment.
+              I agree to send these photos and supplied details to Remainable’s
+              AI service for a preliminary AI review. This is not a structural
+              safety assessment.
             </label>
           )}
           <div className="screen-action">
@@ -407,7 +409,7 @@ export function AssessmentWorkspace() {
               <p>
                 {a.sample
                   ? "The demo uses fictional findings associated only with the example illustrations."
-                  : "Muse reviews visible evidence. Add building and jurisdiction details after your first result."}
+                  : "Remainable reviews visible evidence. Add building and jurisdiction details after your first result."}
               </p>
             </div>
             <button
@@ -421,7 +423,7 @@ export function AssessmentWorkspace() {
                   ? "Update screening"
                   : a.sample
                     ? "Run demo screening"
-                    : "Get first result with Muse"}
+                    : "Get first result with Remainable"}
               <ArrowRight size={18} />
             </button>
           </div>
@@ -453,8 +455,8 @@ export function AssessmentWorkspace() {
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
                 />{" "}
-                Send photographs and updated details to Muse when I refine this
-                result.
+                Send photographs and updated details to Remainable when I refine
+                this result.
               </label>
             )}
             <Results
@@ -578,7 +580,7 @@ function Results({
             {r.mode === "fictional-example"
               ? "Fictional example findings"
               : r.mode === "muse"
-                ? "Muse visual review · Preliminary"
+                ? "Remainable visual review · Preliminary"
                 : "Documentation only · No analysis performed"}
           </span>
         </div>
@@ -589,7 +591,7 @@ function Results({
             {r.priority
               ? PRIORITIES[r.priority]
               : r.mode === "muse"
-                ? "Muse reviewed visible evidence; review priority requires a qualified professional."
+                ? "Remainable reviewed visible evidence; review priority requires a qualified professional."
                 : "No model or engineer has reviewed the uploaded evidence."}
           </p>
           <small>Priority is not a safety classification.</small>

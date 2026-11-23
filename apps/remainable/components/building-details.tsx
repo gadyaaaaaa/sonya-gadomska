@@ -183,7 +183,7 @@ export function BuildingDetails({
           </label>
           <p className="fineprint">
             Include the source, edition and relevant excerpt if you have them.
-            Muse can discuss supplied references and jurisdiction-specific
+            Remainable can discuss supplied references and jurisdiction-specific
             questions; it does not verify current building codes or certify
             compliance.
           </p>

@@ -4,15 +4,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useAssessment } from "./use-assessment";
+import { reviewForDisplay } from "@/lib/review-display";
 import { COPYRIGHT, DISCLAIMER } from "@/lib/policy";
 export function Report() {
   const { assessment: a, error, loading } = useAssessment();
   const params = useSearchParams();
   if (loading) return <p className="loading">Preparing report…</p>;
   const version = params.get("version");
-  const r = version
+  const stored = version
     ? a?.versions.find((v) => v.version === Number(version))
     : a?.versions.at(-1);
+  const r = stored ? reviewForDisplay(stored) : undefined;
   if (!a || !r)
     return (
       <section className="workspace empty-state">
@@ -77,12 +79,12 @@ export function Report() {
             {r.mode === "fictional-example"
               ? "FICTIONAL EXAMPLE — NOT A SITE ASSESSMENT"
               : r.mode === "muse"
-                ? "MUSE VISUAL REVIEW — PRELIMINARY"
+                ? "REMAINABLE VISUAL REVIEW — PRELIMINARY"
                 : "DOCUMENTATION ONLY — PHOTOGRAPHS NOT ANALYZED"}
           </strong>
           <p>
             {r.mode === "muse"
-              ? `Photographs reviewed by ${r.model}. Findings require professional verification; this is not a structural safety assessment.`
+              ? `Photographs reviewed by Remainable. Findings require professional verification; this is not a structural safety assessment.`
               : "No AI model has run. Example findings refer only to labeled schematic illustrations, not user-supplied photos."}
           </p>
         </aside>
@@ -218,7 +220,7 @@ export function Report() {
                   {p.isSample
                     ? "Fictional illustration"
                     : r.mode === "muse"
-                      ? "User-supplied photograph — Muse review"
+                      ? "User-supplied photograph — Remainable review"
                       : "User-supplied photograph — not analyzed"}
                 </p>
                 {p.note && <p>{p.note}</p>}

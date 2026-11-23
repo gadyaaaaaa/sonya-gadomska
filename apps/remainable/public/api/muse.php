@@ -25,7 +25,7 @@ function remainable_schema(): array {
     return $schema;
 }
 function remainable_input(array $body): array {
-    if (($body['consent']??false)!==true) throw new InvalidArgumentException('Agree to send photographs and details to Muse first.');
+    if (($body['consent']??false)!==true) throw new InvalidArgumentException('Agree to send photographs and details to Remainable first.');
     $photos=$body['photos']??null; $building=$body['building']??null;
     if (!is_array($photos)||count($photos)<1||count($photos)>30||!is_array($building)) throw new InvalidArgumentException('Supply 1–30 photographs and an optional building record.');
     $context=[];
@@ -70,12 +70,12 @@ function remainable_analyze(array $content, array $ids, string $key): array {
     $ch=curl_init('https://api.meta.ai/v1/responses');
     curl_setopt_array($ch,[CURLOPT_POST=>true,CURLOPT_HTTPHEADER=>['Authorization: Bearer '.$key,'Content-Type: application/json'],CURLOPT_POSTFIELDS=>json_encode($payload),CURLOPT_RETURNTRANSFER=>true,CURLOPT_CONNECTTIMEOUT=>10,CURLOPT_TIMEOUT=>85]);
     $raw=curl_exec($ch); $status=curl_getinfo($ch,CURLINFO_HTTP_CODE); curl_close($ch);
-    if ($raw===false||$status!==200) throw new RuntimeException('Muse is unavailable. Your saved photos and previous report are unchanged.');
+    if ($raw===false||$status!==200) throw new RuntimeException('Remainable is unavailable. Your saved photos and previous report are unchanged.');
     $response=json_decode($raw,true); $text='';
-    if (($response['status']??'')!=='completed') throw new RuntimeException('Muse did not complete the review. Please retry.');
+    if (($response['status']??'')!=='completed') throw new RuntimeException('Remainable did not complete the review. Please retry.');
     foreach($response['output']??[] as $item) foreach($item['content']??[] as $part) if (($part['type']??'')==='output_text') $text.=$part['text'];
     $result=json_decode($text,true);
-    if (!is_array($result)) throw new RuntimeException('Muse returned an unreadable review. Please retry.');
+    if (!is_array($result)) throw new RuntimeException('Remainable returned an unreadable review. Please retry.');
     remainable_validate($result,$ids);
     return $result;
 }
@@ -85,7 +85,7 @@ function remainable_main(): void {
     $config=is_readable($configPath)?json_decode(file_get_contents($configPath),true):[];
     if (($_SERVER['REQUEST_METHOD']??'')==='GET') {echo json_encode(['configured'=>!empty($config['api_key']),'model'=>'muse-ember-1.0']); return;}
     if (($_SERVER['REQUEST_METHOD']??'')!=='POST') remainable_fail(405,'Use POST.');
-    if (empty($config['api_key'])) remainable_fail(503,'Muse is not configured on this server yet. Your photographs remain saved.');
+    if (empty($config['api_key'])) remainable_fail(503,'Remainable is not configured on this server yet. Your photographs remain saved.');
     if (($_SERVER['HTTP_ORIGIN']??'')!==($config['origin']??'https://remainable.ca')) remainable_fail(403,'Use the Remainable website to request a review.');
     if (stripos($_SERVER['CONTENT_TYPE']??'','application/json')!==0) remainable_fail(415,'Use JSON.');
     if ((int)($_SERVER['CONTENT_LENGTH']??0)>24000000) remainable_fail(413,'This image set is too large. Please use fewer photographs.');
@@ -107,7 +107,7 @@ function remainable_main(): void {
     $usage['daily']=($usage['daily']??0)+1;$usage['monthly']=($usage['monthly']??0)+1;
     rewind($lock);ftruncate($lock,0);fwrite($lock,json_encode($usage));fflush($lock);
     try {$result=remainable_analyze($content,$ids,$config['api_key']);echo json_encode(['result'=>$result,'model'=>'muse-ember-1.0']);}
-    catch(Throwable $e) {http_response_code(502);echo json_encode(['error'=>$e instanceof RuntimeException?$e->getMessage():'Muse review failed. Your previous report is unchanged.']);}
+    catch(Throwable $e) {http_response_code(502);echo json_encode(['error'=>$e instanceof RuntimeException?$e->getMessage():'Remainable review failed. Your previous report is unchanged.']);}
     finally {flock($lock,LOCK_UN);fclose($lock);}
 }
 if (!defined('REMAINABLE_MUSE_LIBRARY')) remainable_main();

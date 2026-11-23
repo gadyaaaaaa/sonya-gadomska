@@ -81,7 +81,7 @@ export default function Home() {
             [
               "02",
               "Organise",
-              "Get an initial visual review with Muse, or keep a local documentation-only record.",
+              "Get an initial visual review with Remainable, or keep a local documentation-only record.",
             ],
             [
               "03",
@@ -143,8 +143,8 @@ export default function Home() {
             <h3>A photo-first prototype</h3>
             <p>
               Upload photos first, then add context. Records stay in this
-              browser; running an AI review sends photos and details to Muse.
-              Professional verification remains necessary.
+              browser; running an AI review sends photos and details to
+              Remainable. Professional verification remains necessary.
             </p>
           </article>
           <article>
