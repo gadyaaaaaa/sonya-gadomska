@@ -29,11 +29,14 @@ export function Report() {
         </Link>
       </section>
     );
-  const photos = Array.from(
-    new Map(
-      [...(a.archivedPhotos ?? []), ...a.photos].map((p) => [p.id, p]),
-    ).values(),
-  ).filter((p) => r.photoIds.includes(p.id));
+  const building = r.buildingSnapshot ?? a.building;
+  const photos =
+    r.evidenceSnapshot ??
+    Array.from(
+      new Map(
+        [...(a.archivedPhotos ?? []), ...a.photos].map((p) => [p.id, p]),
+      ).values(),
+    ).filter((p) => r.photoIds.includes(p.id));
   const list = (items: string[], empty = "Not assessed.") => (
     <ul>
       {(items.length ? items : [empty]).map((x) => (
@@ -67,25 +70,27 @@ export function Report() {
             <br />
             Screening Report
           </h1>
-          <p>AI-assisted preliminary screening · Phase 1 demonstration</p>
+          <p>Preliminary documentation and visual review</p>
         </header>
         <aside className="report-demo">
           <strong>
             {r.mode === "fictional-example"
               ? "FICTIONAL EXAMPLE — NOT A SITE ASSESSMENT"
-              : "DOCUMENTATION ONLY — PHOTOGRAPHS NOT ANALYZED"}
+              : r.mode === "muse"
+                ? "MUSE VISUAL REVIEW — PRELIMINARY"
+                : "DOCUMENTATION ONLY — PHOTOGRAPHS NOT ANALYZED"}
           </strong>
           <p>
-            No AI model has run. Example findings refer only to labeled
-            schematic illustrations, not user-supplied photos. No structural
-            engineering conclusions are provided.
+            {r.mode === "muse"
+              ? `Photographs reviewed by ${r.model}. Findings require professional verification; this is not a structural safety assessment.`
+              : "No AI model has run. Example findings refer only to labeled schematic illustrations, not user-supplied photos."}
           </p>
         </aside>
         <section>
           <h2>01 / Assessment information</h2>
           <dl className="report-info">
             <dt>Project</dt>
-            <dd>{a.building.projectName}</dd>
+            <dd>{building.projectName || "Untitled building review"}</dd>
             <dt>Reference</dt>
             <dd>{a.id.slice(0, 8).toUpperCase()}</dd>
             <dt>Report date</dt>
@@ -105,29 +110,31 @@ export function Report() {
           <dl className="report-info">
             <dt>Location</dt>
             <dd>
-              {a.building.address}, {a.building.country}
+              {building.address}, {building.country}
             </dd>
             <dt>Use / floors</dt>
             <dd>
-              {a.building.buildingUse} / {a.building.floors}
+              {building.buildingUse} / {building.floors}
             </dd>
             <dt>Construction year</dt>
-            <dd>{a.building.constructionYear || "Not supplied"}</dd>
+            <dd>{building.constructionYear || "Not supplied"}</dd>
             <dt>Approximate area</dt>
-            <dd>
-              {a.building.area ? `${a.building.area} m²` : "Not supplied"}
-            </dd>
+            <dd>{building.area ? `${building.area} m²` : "Not supplied"}</dd>
+            <dt>Jurisdiction</dt>
+            <dd>{building.jurisdiction || "Not supplied"}</dd>
+            <dt>Supplied norms (unverified)</dt>
+            <dd>{building.buildingNorms || "Not supplied"}</dd>
             <dt>Structural system</dt>
-            <dd>{a.building.structuralSystem}</dd>
+            <dd>{building.structuralSystem}</dd>
           </dl>
         </section>
         <section>
           <h2>03 / Incident</h2>
           <p>
-            {a.building.incidentType} ·{" "}
-            {a.building.incidentDate || "Incident date not supplied"}
+            {building.incidentType} ·{" "}
+            {building.incidentDate || "Incident date not supplied"}
           </p>
-          {a.building.notes && <p>{a.building.notes}</p>}
+          {building.notes && <p>{building.notes}</p>}
         </section>
         <section>
           <h2>04 / Submitted evidence</h2>
@@ -135,7 +142,9 @@ export function Report() {
             {r.photoIds.length} evidence items in this version.{" "}
             {photos.filter((p) => p.isSample).length} fictional illustrations;{" "}
             {photos.filter((p) => !p.isSample).length} user-supplied images,
-            unreviewed.
+            {r.mode === "muse"
+              ? "reviewed by AI, not verified by an engineer."
+              : "unreviewed."}
           </p>
           <p>{r.summary}</p>
         </section>
@@ -150,8 +159,10 @@ export function Report() {
                 <p>{o.description}</p>
                 <p className="fineprint">
                   Visual severity: {o.severityVisual}. Location: {o.location}{" "}
-                  Confidence not measured (fictional example). Visible severity
-                  is not equivalent to structural significance.
+                  {r.mode === "muse"
+                    ? "Confidence not independently calibrated."
+                    : "Confidence not measured (fictional example)."}{" "}
+                  Visible severity is not equivalent to structural significance.
                 </p>
               </div>
             ))
@@ -206,7 +217,9 @@ export function Report() {
                   {p.category} ·{" "}
                   {p.isSample
                     ? "Fictional illustration"
-                    : "User-supplied photograph — not analyzed"}
+                    : r.mode === "muse"
+                      ? "User-supplied photograph — Muse review"
+                      : "User-supplied photograph — not analyzed"}
                 </p>
                 {p.note && <p>{p.note}</p>}
               </figcaption>

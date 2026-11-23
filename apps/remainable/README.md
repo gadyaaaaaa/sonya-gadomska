@@ -6,6 +6,14 @@ Author and copyright owner: **Sonya Gadomska**. © 2026 Sonya Gadomska. All righ
 
 Remainable helps collect building information and photographs, identify evidence gaps, and prepare a preliminary documentation package for a qualified engineer. It does not decide whether a building can be saved.
 
+## Photo-first review with Muse
+
+Start with photographs, request an initial visual review, then add optional building and jurisdiction details to refine it. Original reports and evidence are preserved. A local documentation-only option and the clearly labeled fictional example remain available.
+
+Muse runs through a server-side gateway, with explicit user consent and a private credential. Configuration, limitations, release verification and rollback: [server/README.md](server/README.md).
+
+The earlier Phase 1 notes below describe the historical local-only milestone, not the current Muse integration.
+
 ## Phase 1: complete local demonstration
 
 - Architectural landing page, structured building form and required acknowledgment.

@@ -13,6 +13,9 @@ import {
   AlertTriangle,
   ImagePlus,
 } from "lucide-react";
+import { BuildingDetails } from "./building-details";
+import { analyzeWithMuse } from "@/lib/ai/muse";
+import type { Building } from "@/lib/types";
 import { useAssessment } from "./use-assessment";
 import { DemoNotice, Steps } from "./shell";
 import { saveAssessment } from "@/lib/store";
@@ -34,6 +37,7 @@ export function AssessmentWorkspace() {
     loading,
   } = useAssessment();
   const [view, setView] = useState<"photos" | "results" | null>(null);
+  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState("");
   const [dragging, setDragging] = useState(false);
   const [selected, setSelected] = useState<Photo | null>(null);
@@ -80,6 +84,45 @@ export function AssessmentWorkspace() {
       if (input.current) input.current.value = "";
     }
   }
+  async function review(building?: Building, documentationOnly = false) {
+    if (!a || busy) return;
+    const real = a.photos.some((p) => !p.isSample);
+    if (real && !documentationOnly && !consent) {
+      setError(
+        "Please agree to send photographs and details to Muse before running the review.",
+      );
+      return;
+    }
+    setBusy("Preparing your review…");
+    setError("");
+    try {
+      await queue.current;
+      const next = {
+        ...a,
+        building: building ?? a.building,
+        versions: a.versions.map((v) => ({
+          ...v,
+          buildingSnapshot: v.buildingSnapshot ?? structuredClone(a.building),
+          evidenceSnapshot:
+            v.evidenceSnapshot ??
+            [...a.photos, ...(a.archivedPhotos ?? [])].filter((p) =>
+              v.photoIds.includes(p.id),
+            ),
+        })),
+      };
+      // Save newly supplied context even if the provider is unavailable. Keep reports intact.
+      if (building) await persist(next);
+      const result =
+        real && !documentationOnly ? await analyzeWithMuse(next) : screen(next);
+      await persist({ ...next, versions: [...next.versions, result] });
+      setView("results");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy("");
+    }
+  }
   if (loading)
     return (
       <p className="loading" role="status">
@@ -100,23 +143,35 @@ export function AssessmentWorkspace() {
   const mode = view ?? (current ? "results" : "photos");
   const changed =
     !!current &&
-    (current.photoIds.length !== a.photos.length ||
+    (JSON.stringify(current.buildingSnapshot ?? a.building) !==
+      JSON.stringify(a.building) ||
+      current.photoIds.length !== a.photos.length ||
       a.photos.some((p) => !current.photoIds.includes(p.id)));
   return (
     <>
       <DemoNotice />
-      <Steps active={mode === "photos" ? 2 : 3} />
+      <Steps
+        active={mode === "photos" ? 1 : current && current.version > 1 ? 3 : 2}
+      />
       <div className="page-title title-with-action">
         <div>
           <p className="eyebrow">
             {mode === "photos"
-              ? "02 / PHOTO EVIDENCE"
-              : "03 / PRELIMINARY DOCUMENTATION"}
+              ? "01 / PHOTO EVIDENCE"
+              : "02 / PRELIMINARY REVIEW"}
           </p>
-          <h1>{a.building.projectName}</h1>
+          <h1>{a.building.projectName || "Your building review"}</h1>
           <p>
-            {a.building.address} · {a.building.floors} floors ·{" "}
-            {a.building.buildingUse}
+            {[
+              a.building.address,
+              a.building.floors ? `${a.building.floors} floors` : "",
+              a.building.buildingUse !== "unknown"
+                ? a.building.buildingUse
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" · ") ||
+              "Building details can be added after your first result."}
           </p>
         </div>
         {current && (
@@ -129,13 +184,14 @@ export function AssessmentWorkspace() {
       <div className="workspace-tabs">
         <button
           className={mode === "photos" ? "active" : ""}
+          disabled={!!busy}
           onClick={() => setView("photos")}
         >
           Photo evidence <span>{a.photos.length}</span>
         </button>
         <button
           className={mode === "results" ? "active" : ""}
-          disabled={!current}
+          disabled={!current || !!busy}
           onClick={() => setView("results")}
         >
           Screening & next steps {current && <span>v{current.version}</span>}
@@ -204,8 +260,9 @@ export function AssessmentWorkspace() {
                 </button>
               )}
               <p className="fineprint">
-                Photos are resized for this local prototype. Retain your
-                originals separately. No photographs are sent to an AI service.
+                Photos are resized for review. Retain your originals separately.
+                Running a Muse review sends these photos and supplied details to
+                Meta.
               </p>
             </section>
             <aside className="side-note photo-guidance">
@@ -286,6 +343,7 @@ export function AssessmentWorkspace() {
                   <label className="field compact">
                     <span>Image category</span>
                     <select
+                      disabled={!!busy}
                       value={p.category}
                       onChange={(e) =>
                         void persist({
@@ -309,6 +367,7 @@ export function AssessmentWorkspace() {
                   <label className="field compact">
                     <span>Image note (optional)</span>
                     <input
+                      disabled={!!busy}
                       maxLength={500}
                       value={p.note}
                       placeholder="Where was this taken?"
@@ -326,6 +385,18 @@ export function AssessmentWorkspace() {
               ))}
             </div>
           )}
+          {a.photos.some((p) => !p.isSample) && (
+            <label className="acknowledgment">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+              />{" "}
+              I agree to send these photos and supplied details to Muse (Meta)
+              for a preliminary AI review. This is not a structural safety
+              assessment.
+            </label>
+          )}
           <div className="screen-action">
             <div>
               <strong>
@@ -336,27 +407,13 @@ export function AssessmentWorkspace() {
               <p>
                 {a.sample
                   ? "The demo uses fictional findings associated only with the example illustrations."
-                  : "This version prepares a documentation-only report. Your photographs will remain unreviewed."}
+                  : "Muse reviews visible evidence. Add building and jurisdiction details after your first result."}
               </p>
             </div>
             <button
               className="button primary"
               disabled={!a.photos.length || !!busy}
-              onClick={async () => {
-                setBusy("Organizing evidence and preparing the demo report…");
-                setError("");
-                try {
-                  await queue.current;
-                  const next = { ...a, versions: [...a.versions, screen(a)] };
-                  await persist(next);
-                  setView("results");
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                } catch (e) {
-                  setError((e as Error).message);
-                } finally {
-                  setBusy("");
-                }
-              }}
+              onClick={() => void review()}
             >
               {busy
                 ? "Preparing…"
@@ -364,10 +421,19 @@ export function AssessmentWorkspace() {
                   ? "Update screening"
                   : a.sample
                     ? "Run demo screening"
-                    : "Prepare screening"}
+                    : "Get first result with Muse"}
               <ArrowRight size={18} />
             </button>
           </div>
+          {a.photos.some((p) => !p.isSample) && (
+            <button
+              className="text-link"
+              disabled={!!busy}
+              onClick={() => void review(undefined, true)}
+            >
+              Create a local record without AI
+            </button>
+          )}
         </>
       ) : (
         current && (
@@ -380,6 +446,17 @@ export function AssessmentWorkspace() {
                 </button>
               </div>
             )}
+            {a.photos.some((p) => !p.isSample) && (
+              <label className="acknowledgment">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                />{" "}
+                Send photographs and updated details to Muse when I refine this
+                result.
+              </label>
+            )}
             <Results
               result={current}
               a={a}
@@ -390,6 +467,14 @@ export function AssessmentWorkspace() {
               onPhoto={(p) => {
                 setSelected(p);
                 dialog.current?.showModal();
+              }}
+            />
+            <BuildingDetails
+              key={a.id}
+              building={a.building}
+              busy={!!busy}
+              onRefine={async (building) => {
+                await review(building);
               }}
             />
           </>
@@ -418,7 +503,11 @@ export function AssessmentWorkspace() {
             <img src={selected.src} alt={selected.filename} />
             <aside>
               <p className="eyebrow">
-                {selected.isSample ? selected.id : "USER-SUPPLIED / UNREVIEWED"}
+                {selected.isSample
+                  ? selected.id
+                  : current?.mode === "muse"
+                    ? "USER-SUPPLIED / AI REVIEW"
+                    : "USER-SUPPLIED / UNREVIEWED"}
               </p>
               <h2>{selected.filename}</h2>
               <p>{selected.note}</p>
@@ -435,7 +524,11 @@ export function AssessmentWorkspace() {
                       <dt>Location</dt>
                       <dd>{o.location}</dd>
                       <dt>Confidence</dt>
-                      <dd>Not measured — fictional example</dd>
+                      <dd>
+                        {current?.mode === "muse"
+                          ? "Not independently calibrated"
+                          : "Not measured — fictional example"}
+                      </dd>
                     </dl>
                   </div>
                 ))}
@@ -468,7 +561,8 @@ function Results({
   onUpload: () => void;
   onPhoto: (p: Photo) => void;
 }) {
-  const all = [...a.photos, ...(a.archivedPhotos ?? [])];
+  const all = r.evidenceSnapshot ?? [...a.photos, ...(a.archivedPhotos ?? [])];
+  const building = r.buildingSnapshot ?? a.building;
   return (
     <>
       <section className="result-summary">
@@ -483,18 +577,20 @@ function Results({
           <span className="tag">
             {r.mode === "fictional-example"
               ? "Fictional example findings"
-              : "Documentation only · No analysis performed"}
+              : r.mode === "muse"
+                ? "Muse visual review · Preliminary"
+                : "Documentation only · No analysis performed"}
           </span>
         </div>
         <aside>
           <p className="eyebrow">REVIEW PRIORITY</p>
-          <strong className="priority">
-            {r.priority ? "High" : "Not assigned"}
-          </strong>
+          <strong className="priority">{r.priority || "Not assigned"}</strong>
           <p>
             {r.priority
               ? PRIORITIES[r.priority]
-              : "No model or engineer has reviewed the uploaded evidence."}
+              : r.mode === "muse"
+                ? "Muse reviewed visible evidence; review priority requires a qualified professional."
+                : "No model or engineer has reviewed the uploaded evidence."}
           </p>
           <small>Priority is not a safety classification.</small>
         </aside>
@@ -563,11 +659,11 @@ function Results({
           <h3>Assessment record</h3>
           <dl>
             <dt>Building use</dt>
-            <dd>{a.building.buildingUse}</dd>
+            <dd>{building.buildingUse}</dd>
             <dt>Structural system</dt>
-            <dd>{a.building.structuralSystem}</dd>
+            <dd>{building.structuralSystem}</dd>
             <dt>Incident</dt>
-            <dd>{a.building.incidentType}</dd>
+            <dd>{building.incidentType}</dd>
             <dt>Report date</dt>
             <dd>{new Date(r.createdAt).toLocaleDateString()}</dd>
             <dt>Evidence items</dt>
@@ -611,8 +707,8 @@ function Results({
           </button>
         </div>
         <p>
-          General demonstration requests. A qualified professional must
-          determine which views are appropriate for the site.
+          Suggested additional evidence. A qualified professional must determine
+          which views are appropriate for the site.
         </p>
         <div className="request-grid">
           {r.followups.map((f, i) => (

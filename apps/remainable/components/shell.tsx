@@ -39,8 +39,8 @@ export function DemoNotice() {
     <aside className="demo-notice">
       <span className="live-dot" /> <strong>Working prototype</strong>
       <span>
-        Photos stay in this browser. Findings are fictional examples; uploaded
-        photos are not analyzed.
+        Records stay in this browser. AI review sends selected evidence to Muse.
+        Example findings remain labeled as fictional.
       </span>
     </aside>
   );
@@ -48,18 +48,16 @@ export function DemoNotice() {
 export function Steps({ active }: { active: number }) {
   return (
     <ol className="steps" aria-label="Assessment progress">
-      {["Building details", "Photo evidence", "Screening & review"].map(
-        (s, i) => (
-          <li
-            key={s}
-            aria-current={active === i + 1 ? "step" : undefined}
-            className={active === i + 1 ? "active" : ""}
-          >
-            <span>0{i + 1}</span>
-            {s}
-          </li>
-        ),
-      )}
+      {["Photo evidence", "First result", "Refine with details"].map((s, i) => (
+        <li
+          key={s}
+          aria-current={active === i + 1 ? "step" : undefined}
+          className={active === i + 1 ? "active" : ""}
+        >
+          <span>0{i + 1}</span>
+          {s}
+        </li>
+      ))}
     </ol>
   );
 }

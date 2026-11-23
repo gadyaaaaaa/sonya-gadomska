@@ -8,20 +8,7 @@ test("complete fictional assessment, evidence viewer, revision and printable rep
     page.getByRole("heading", { name: "Can this building be saved?" }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Start an assessment" }).last().click();
-  await page.getByRole("button", { name: "Continue to photographs" }).click();
-  await expect(
-    page.getByText("Please acknowledge the tool’s limitations."),
-  ).toBeVisible();
   await page.getByRole("button", { name: "Use the fictional example" }).click();
-  await page.getByRole("checkbox").check();
-  await page.getByRole("button", { name: "Continue to photographs" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Evidence register" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Run demo screening" }),
-  ).toBeEnabled();
-  await page.getByRole("button", { name: "Run demo screening" }).click();
   await expect(
     page.getByRole("heading", { name: "Additional evidence recommended" }),
   ).toBeVisible();
@@ -60,39 +47,33 @@ test("real image flow remains unreviewed, survives reload and validates upload l
   page,
 }) => {
   await page.goto("/new/");
-  await page.getByLabel("Project name *").fill("Real-photo test");
-  await page.getByLabel("Country *").fill("Canada");
-  await page
-    .getByLabel("Building address / location *")
-    .fill("Test reference only");
-  await page.getByLabel("Number of floors *").fill("5");
-  await page.getByRole("checkbox").check();
-  await page.getByRole("button", { name: "Continue to photographs" }).click();
-  await page
-    .getByLabel("Upload photographs")
-    .setInputFiles({
-      name: "bad.txt",
-      mimeType: "text/plain",
-      buffer: Buffer.from("not an image"),
-    });
+  await page.getByLabel("Upload photographs").setInputFiles({
+    name: "bad.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("not an image"),
+  });
   await expect(page.locator(".error[role=alert]")).toContainText(
     "use JPEG, PNG or WebP",
   );
-  await page
-    .getByLabel("Upload photographs")
-    .setInputFiles({
-      name: "test.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=",
-        "base64",
-      ),
-    });
+  await page.getByLabel("Upload photographs").setInputFiles({
+    name: "test.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
   await expect(
-    page.getByRole("button", { name: "Prepare screening", exact: true }),
+    page.getByRole("button", {
+      name: "Create a local record without AI",
+      exact: true,
+    }),
   ).toBeEnabled();
   await page
-    .getByRole("button", { name: "Prepare screening", exact: true })
+    .getByRole("button", {
+      name: "Create a local record without AI",
+      exact: true,
+    })
     .click();
   await expect(page.getByText("Not assigned", { exact: true })).toBeVisible();
   await expect(
@@ -121,4 +102,87 @@ test("mobile main routes have no horizontal overflow", async ({ page }) => {
       )
       .toBe(true);
   }
+});
+
+test("photo-first Muse review and optional refinement preserve historical results", async ({
+  page,
+}) => {
+  const payloads: Record<string, unknown>[] = [];
+  await page.route("**/api/muse.php", async (route) => {
+    const payload = route.request().postDataJSON();
+    payloads.push(payload);
+    await route.fulfill({
+      json: {
+        result: {
+          summary: payload.building.country
+            ? "Refined with supplied country."
+            : "Initial photo review.",
+          observations: [],
+          concerns: [],
+          nonStructural: [],
+          missing: ["Professional inspection"],
+          actions: ["Consult a qualified professional."],
+          limitations: ["Visible evidence only."],
+        },
+      },
+    });
+  });
+  await page.goto("/new/");
+  await expect(page.getByLabel("Country", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Upload photographs").setInputFiles({
+    name: "photo.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
+  await page
+    .getByRole("button", { name: "Get first result with Muse" })
+    .click();
+  await expect(page.locator(".error[role=alert]")).toContainText(
+    "Please agree",
+  );
+  expect(payloads).toHaveLength(0);
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Get first result with Muse" })
+    .click();
+  await expect(
+    page.getByText("Initial photo review.", { exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Country", { exact: true }).fill("Canada");
+  await page.getByLabel("Province, region or municipality").fill("Ontario");
+  await page
+    .getByRole("button", { name: "Save details & refine result" })
+    .click();
+  await expect(
+    page.getByText("Refined with supplied country.", { exact: true }),
+  ).toBeVisible();
+  expect(payloads).toHaveLength(2);
+  const id = new URL(page.url()).searchParams.get("id");
+  await page.goto(`/report/?id=${id}&version=1`);
+  await expect(
+    page.getByText("Initial photo review.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Ontario", { exact: true })).toHaveCount(0);
+  await page.goto(`/report/?id=${id}&version=2`);
+  await expect(page.getByText("Ontario", { exact: true })).toBeVisible();
+  await page.goto(`/assessment/?id=${id}`);
+  await page.route("**/api/muse.php", (route) =>
+    route.fulfill({
+      status: 502,
+      json: { error: "Muse temporarily unavailable" },
+    }),
+  );
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Save details & refine result" })
+    .click();
+  await expect(page.locator(".error[role=alert]")).toContainText(
+    "Muse temporarily unavailable",
+  );
+  await expect(
+    page.getByText("Refined with supplied country.", { exact: true }),
+  ).toBeVisible();
 });

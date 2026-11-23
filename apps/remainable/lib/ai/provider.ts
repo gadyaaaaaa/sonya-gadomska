@@ -1,9 +1,8 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 import type { Assessment, Screening } from "../types";
-// The future server-only implementation must validate both model responses.
-// The Phase 1 UI uses deterministic demo fixtures, never this interface.
+// Muse requests use the server-only PHP gateway; credentials never reach the browser.
 export interface ScreeningProvider {
   readonly name: string;
   analyze(assessment: Assessment): Promise<Screening>;
 }
-export const LIVE_ANALYSIS_ENABLED = false;
+// Availability is reported by GET /api/muse.php at runtime.

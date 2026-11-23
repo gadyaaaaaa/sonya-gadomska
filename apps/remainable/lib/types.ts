@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 import { z } from "zod";
 export const uses = [
+  "unknown",
   "residential",
   "office",
   "school",
@@ -46,15 +47,18 @@ const optionalNumber = (max: number) =>
       `Enter a positive number up to ${max}, or leave blank.`,
     );
 export const buildingSchema = z.object({
-  projectName: z.string().trim().min(2, "Enter a project name.").max(120),
-  address: z.string().trim().min(2, "Enter a location.").max(240),
-  country: z.string().trim().min(2, "Enter a country.").max(80),
+  projectName: z.string().trim().max(120),
+  address: z.string().trim().max(240),
+  country: z.string().trim().max(80),
   buildingUse: z.enum(uses),
   constructionYear: optionalNumber(new Date().getFullYear()),
   floors: z
     .string()
-    .regex(/^\d+$/, "Enter the number of floors.")
-    .refine((v) => Number(v) >= 1 && Number(v) <= 200, "Enter 1–200 floors."),
+    .refine(
+      (v) =>
+        v === "" || (/^\d+$/.test(v) && Number(v) >= 1 && Number(v) <= 200),
+      "Enter 1–200 floors, or leave blank.",
+    ),
   area: optionalNumber(10000000),
   structuralSystem: z.enum(systems),
   incidentType: z.enum(incidents),
@@ -68,6 +72,8 @@ export const buildingSchema = z.object({
       "Use a valid date that is not in the future.",
     ),
   notes: z.string().max(4000),
+  jurisdiction: z.string().max(240).optional(),
+  buildingNorms: z.string().max(6000).optional(),
   acknowledged: z
     .boolean()
     .refine(Boolean, "Please acknowledge the tool’s limitations."),
@@ -105,9 +111,12 @@ export type Screening = {
   version: number;
   createdAt: string;
   photoIds: string[];
-  mode: "fictional-example" | "documentation-only";
+  mode: "fictional-example" | "documentation-only" | "muse";
   status: "additional_evidence_recommended" | "seriously_insufficient_evidence";
-  priority: "high" | null;
+  priority: "routine" | "elevated" | "high" | "urgent" | null;
+  buildingSnapshot?: Building;
+  evidenceSnapshot?: Photo[];
+  model?: string;
   summary: string;
   observations: Observation[];
   concerns: string[];

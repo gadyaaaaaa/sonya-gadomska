@@ -28,7 +28,9 @@ export function SavedAssessments() {
       {rows.map((a) => (
         <div className="saved-row" key={a.id}>
           <Link href={`/assessment/?id=${a.id}`}>
-            <strong>{a.building.projectName}</strong>
+            <strong>
+              {a.building.projectName || "Untitled building review"}
+            </strong>
             <span>
               {a.photos.length} evidence items · {a.versions.length} report
               versions
@@ -37,7 +39,7 @@ export function SavedAssessments() {
           </Link>
           <button
             className="icon-button"
-            aria-label={`Delete ${a.building.projectName}`}
+            aria-label={`Delete ${a.building.projectName || "untitled building review"}`}
             onClick={async () => {
               if (
                 !confirm(

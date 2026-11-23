@@ -1664,3 +1664,11 @@ summary {
     font-size: 16px;
   }
 }
+
+/* Optional context follows the first review. */
+.context-form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.context-form .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.context-form textarea { min-height: 110px; }
+.acknowledgment { display:flex; align-items:flex-start; gap:12px; margin:24px 0; line-height:1.6; }
+.acknowledgment input { flex:none; margin-top:6px; }
+@media(max-width:600px) { .context-form .form-grid { grid-template-columns:1fr; } }

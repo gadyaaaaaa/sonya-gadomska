@@ -109,6 +109,8 @@ export function screen(a: Assessment): Screening {
       ].filter((o) => a.photos.some((p) => p.id === o.imageId))
     : [];
   return {
+    buildingSnapshot: structuredClone(a.building),
+    evidenceSnapshot: structuredClone(a.photos),
     version: (prior?.version ?? 0) + 1,
     createdAt: new Date().toISOString(),
     photoIds: a.photos.map((p) => p.id),
