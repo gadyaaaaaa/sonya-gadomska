@@ -151,8 +151,8 @@ test("photo-first Muse review and optional refinement preserve historical result
   await expect(
     page.getByText("Initial photo review.", { exact: true }),
   ).toBeVisible();
-  await page.getByLabel("Country", { exact: true }).fill("Canada");
-  await page.getByLabel("Province, region or municipality").fill("Ontario");
+  await page.getByLabel("Country", { exact: true }).selectOption("Canada");
+  await page.getByLabel("Province, region or district").selectOption("Ontario");
   await page
     .getByRole("button", { name: "Save details & refine result" })
     .click();
@@ -185,4 +185,40 @@ test("photo-first Muse review and optional refinement preserve historical result
   await expect(
     page.getByText("Refined with supplied country.", { exact: true }),
   ).toBeVisible();
+});
+
+test("country-dependent regions clear stale choices and preserve manual jurisdictions", async ({
+  page,
+}) => {
+  await page.goto("/assessment/?sample=1");
+  const country = page.getByLabel("Country", { exact: true });
+  const region = page.getByLabel("Province, region or district", {
+    exact: true,
+  });
+  await expect(country).toHaveValue("Fictional location");
+  await country.selectOption("Canada");
+  await region.selectOption("Ontario");
+  await country.selectOption("Ukraine");
+  await expect(region).toHaveValue("");
+  await expect(
+    region.locator("option").filter({ hasText: /^Ontario$/ }),
+  ).toHaveCount(0);
+  await region.selectOption("Kyiv");
+  await region.selectOption("__custom__");
+  const manual = page.getByLabel("District or municipality (not listed)", {
+    exact: true,
+  });
+  await manual.fill("Podilskyi district, Kyiv");
+  await page
+    .getByRole("button", { name: "Save details & refine result" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: /Screening & next steps/ }),
+  ).toContainText("v2");
+  await page.reload();
+  await expect(country).toHaveValue("Ukraine");
+  await expect(manual).toHaveValue("Podilskyi district, Kyiv");
+  await country.selectOption("");
+  await expect(region).toBeDisabled();
+  await expect(manual).toHaveCount(0);
 });

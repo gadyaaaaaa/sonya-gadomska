@@ -1,6 +1,10 @@
 // Copyright (c) 2026 Sonya Gadomska. All rights reserved.
 "use client";
 import { useState } from "react";
+import { allCountries } from "country-region-data";
+const countries = [...allCountries].sort((a, b) =>
+  a[0].localeCompare(b[0], "en"),
+);
 import {
   buildingSchema,
   uses,
@@ -19,6 +23,17 @@ export function BuildingDetails({
 }) {
   const [draft, setDraft] = useState(building);
   const [error, setError] = useState("");
+  const country = countries.find((c) => c[0] === draft.country);
+  const regions = [...(country?.[2] ?? [])].sort((a, b) =>
+    a[0].localeCompare(b[0], "en"),
+  );
+  const [customRegion, setCustomRegion] = useState(
+    () =>
+      !!building.jurisdiction &&
+      !countries
+        .find((c) => c[0] === building.country)?.[2]
+        .some((r) => r[0] === building.jurisdiction),
+  );
   const field = (
     key: keyof Building,
     label: string,
@@ -66,9 +81,80 @@ export function BuildingDetails({
         <fieldset disabled={busy}>
           <div className="form-grid">
             {field("projectName", "Project name")}
-            {field("country", "Country")}
+            <label className="field">
+              <span>Country</span>
+              <select
+                aria-label="Country"
+                value={draft.country}
+                onChange={(e) => {
+                  setDraft({
+                    ...draft,
+                    country: e.target.value,
+                    jurisdiction: "",
+                  });
+                  setCustomRegion(false);
+                }}
+              >
+                <option value="">Select a country (optional)</option>
+                {draft.country && !country && (
+                  <option value={draft.country}>
+                    {draft.country} (saved value)
+                  </option>
+                )}
+                {countries.map(([name, code]) => (
+                  <option key={code} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </label>
             {field("address", "Building address / location")}
-            {field("jurisdiction", "Province, region or municipality")}
+            <div>
+              <label className="field">
+                <span>Province, region or district</span>
+                <select
+                  aria-label="Province, region or district"
+                  value={
+                    customRegion ? "__custom__" : (draft.jurisdiction ?? "")
+                  }
+                  disabled={!draft.country}
+                  onChange={(e) => {
+                    setCustomRegion(e.target.value === "__custom__");
+                    setDraft({
+                      ...draft,
+                      jurisdiction:
+                        e.target.value === "__custom__" ? "" : e.target.value,
+                    });
+                  }}
+                >
+                  <option value="">
+                    {draft.country
+                      ? "Select a region (optional)"
+                      : "Select a country first"}
+                  </option>
+                  {regions.map(([name, code]) => (
+                    <option key={code || name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                  <option value="__custom__">
+                    Not listed — enter manually
+                  </option>
+                </select>
+              </label>
+              {customRegion && (
+                <label className="field">
+                  <span>District or municipality (not listed)</span>
+                  <input
+                    maxLength={240}
+                    value={draft.jurisdiction ?? ""}
+                    onChange={(e) =>
+                      setDraft({ ...draft, jurisdiction: e.target.value })
+                    }
+                  />
+                </label>
+              )}
+            </div>
             {field("buildingUse", "Building use", uses)}
             {field("structuralSystem", "Known structural system", systems)}
             {field("constructionYear", "Approximate construction year")}

@@ -100,3 +100,7 @@ Before release, archive the existing target directory and record the release com
 ## Ownership
 
 Original application code, design, documentation and demo illustrations: Sonya Gadomska. See `LICENSE`. Third-party dependencies retain their own licenses; user-supplied content is not claimed as application copyright. Sonya is credited as the application author, not as the reviewing structural engineer.
+
+## Country and region selectors
+
+Country and dependent region options use `country-region-data` 4.1.0 (MIT), bundled locally without a geolocation service or API key. The dataset uses ISO 3166-2 addressing subdivisions, not every municipal district. Users can select “Not listed — enter manually” for finer or missing jurisdictions. Existing free-text country and region values remain editable and are not migrated or overwritten. Changing country clears the current region to avoid cross-country combinations. Third-party attribution ships in `public/licenses/country-region-data.txt`.
